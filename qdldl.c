@@ -1,4 +1,4 @@
-#include "os_ldl.h"
+#include "qdldl.h"
 
 #define UNKNOWN -1
 #define USED 1
@@ -8,14 +8,15 @@
    in compressed sparse column form.
 */
 
-os_ldl_int os_ldl_etree(CscMatrix *A,
-                     os_ldl_int* work,
-                     os_ldl_int* Lnz,
-                     os_ldl_int* etree){
+QDLDL_int QDLDL_etree(const QDLDL_int   n,
+                      const QDLDL_int* Ai,
+                      const QDLDL_int* Ap,
+                      QDLDL_int* work,
+                      QDLDL_int* Lnz,
+                      QDLDL_int* etree){
 
-  const os_ldl_int n = A->n;
-  os_ldl_int sumLnz = 0;
-  os_ldl_int i,j,p;
+  QDLDL_int sumLnz = 0;
+  QDLDL_int i,j,p;
 
   // zero out Lnz and work.  Set all etree values to unknown
   for(i = 0; i < n; i++){
@@ -26,8 +27,8 @@ os_ldl_int os_ldl_etree(CscMatrix *A,
 
   for(j = 0; j < n; j++){
     work[j] = j;
-    for(p = A->p[j]; p < A->p[j+1]; p++){
-      i = A->i[p];
+    for(p = Ap[j]; p < Ap[j+1]; p++){
+      i = Ai[p];
       while(work[i] != j){
         if(etree[i] == UNKNOWN){
           etree[i] = j;
@@ -40,59 +41,61 @@ os_ldl_int os_ldl_etree(CscMatrix *A,
     }
   }
 
-
   return sumLnz;
 }
 
 
 
-void os_ldl_factor(CscMatrix *A,
-                     CscMatrix *L,
-                     os_ldl_float* D,
-                     os_ldl_float* Dinv,
-                     os_ldl_int* Lnz,
-                     os_ldl_int* etree,
-                     os_ldl_bool* bwork,
-                     os_ldl_int* iwork,
-                     os_ldl_float* fwork){
+void QDLDL_factor(const QDLDL_int   n,
+                  const QDLDL_int* Ap,
+                  const QDLDL_int* Ai,
+                  const QDLDL_int* Ax,
+                  QDLDL_int  Lp,
+                  QDLDL_int* Li,
+                  QDLDL_int* Lx,
+                  QDLDL_float* D,
+                  QDLDL_float* Dinv,
+                  const QDLDL_int* Lnz,
+                  const QDLDL_int* etree,
+                  QDLDL_bool* bwork,
+                  QDLDL_int* iwork,
+                  QDLDL_float* fwork){
 
-  os_ldl_int i,j,k,nnzY, bidx, cidx, nextIdx, nnzE, tmpIdx;
-  os_ldl_int *yMarkers, *yIdx, *elimBuffer, *LNextSpaceInCol;
-  os_ldl_float *yVals;
+  QDLDL_int i,j,k,nnzY, bidx, cidx, nextIdx, nnzE, tmpIdx;
+  QDLDL_int *yMarkers, *yIdx, *elimBuffer, *LNextSpaceInCol;
+  QDLDL_float *yVals;
 
   //partition working memory into pieces
   yMarkers        = bwork;
   yIdx            = iwork;
-  elimBuffer      = iwork + A->n;
-  LNextSpaceInCol = iwork + A->n*2;
+  elimBuffer      = iwork + n;
+  LNextSpaceInCol = iwork + n*2;
   yVals           = fwork;
 
   // First element of the diagonal D
-  D[0]    = A->x[0];
+  D[0]    = Ax[0];
   Dinv[0] = 1/D[0];
 
   //Assign basic structure to L.
-  L->n = A->n;
-  L->m = A->n;
-  L->p[0] = 0;
-  for(i = 0; i < A->n; i++){
-    L->p[i+1] = L->p[i] + Lnz[i];   //cumsum, total at the end
+  Lp[0] = 0;
+  for(i = 0; i < n; i++){
+    Lp[i+1] = Lp[i] + Lnz[i];   //cumsum, total at the end
   }
 
   // set all Yidx to be 'unused' initially
-  for(i = 0; i < L->n; i++){
+  for(i = 0; i < n; i++){
     yMarkers[i]  = UNUSED;
     yVals[i]     = 0.0;
-    LNextSpaceInCol[i] = L->p[i];
+    LNextSpaceInCol[i] = Lp[i];
   }
 
   //Start from 1 here. The upper LH corner is trivially 0
   //in L b/c are only computing the subdiagonal elements
-  for(k = 1; k < A->n; k++){
+  for(k = 1; k < n; k++){
 
     //Initialize D[k] as the last element
     //of this column of triu(A)
-    D[k] = A->x[A->p[k+1]-1];
+    D[k] = Ax[Ap[k+1]-1];
 
     //number of nonzeros in this row of L
     nnzY = 0;  //number of elements in this row
@@ -100,11 +103,11 @@ void os_ldl_factor(CscMatrix *A,
     //This loop determines where nonzeros
     //will go in the kth row of L, but doesn't
     //compute the actual values
-    tmpIdx = (A->p[k+1]-1);
-    for(i = A->p[k]; i < tmpIdx; i++){
+    tmpIdx = (Ap[k+1]-1);
+    for(i = Ap[k]; i < tmpIdx; i++){
 
-      bidx        = A->i[i];   // we are working on this element of b
-      yVals[bidx] = A->x[i];   // initialise y(bidx) = b(bidx)
+      bidx        = Ai[i];   // we are working on this element of b
+      yVals[bidx] = Ax[i];   // initialise y(bidx) = b(bidx)
 
       // use the forward elimination tree to figure
       // out which elements must be eliminated after
@@ -147,18 +150,18 @@ void os_ldl_factor(CscMatrix *A,
       // loop along the elements in this
       // column of L and subtract to solve to y
       tmpIdx = LNextSpaceInCol[cidx];
-      for(j = L->p[cidx]; j < tmpIdx; j++){
-        yVals[L->i[j]] -= L->x[j]*yVals[cidx];
+      for(j = Lp[cidx]; j < tmpIdx; j++){
+        yVals[Li[j]] -= Lx[j]*yVals[cidx];
       }
 
       //Now I have the cidx^th element of y = L\b.
       //so compute the corresponding element of
       //this row of L and put it into the right place
-      L->i[tmpIdx] = k;
-      L->x[tmpIdx] = yVals[cidx]*Dinv[cidx];
+      Li[tmpIdx] = k;
+      Lx[tmpIdx] = yVals[cidx]*Dinv[cidx];
 
       //D[k] -= yVals[cidx]*yVals[cidx]*Dinv[cidx];
-      D[k] -= yVals[cidx]*L->x[tmpIdx];
+      D[k] -= yVals[cidx]*Lx[tmpIdx];
       LNextSpaceInCol[cidx]++;
 
       //reset the yvalues and indices back to zero and UNUSED
@@ -172,4 +175,50 @@ void os_ldl_factor(CscMatrix *A,
     Dinv[k]= 1/D[k];
 
   } //end for k
+}
+
+// Solves (L+I)x = b
+void QDLDL_Lsolve(const QDLDL_int   n,
+                  const QDLDL_int  Lp,
+                  const QDLDL_int* Li,
+                  const QDLDL_int* Lx,
+                  QDLDL_float* x){
+
+QDLDL_int i,j;
+  for(i = 0; i < n; i++){
+      for(j = Lp[i]; j < Lp[i+1]; j++){
+          x[Li[j]] -= Lx[j]*x[i];
+      }
+  }
+}
+
+// Solves (L+I)'x = b
+void QDLDL_Ltsolve(const QDLDL_int  n,
+                   const QDLDL_int  Lp,
+                   const QDLDL_int* Li,
+                   const QDLDL_int* Lx,
+                   QDLDL_float* x){
+
+QDLDL_int i,j;
+  for{i = n-1; i>=0; i--){
+      for(j = Lp[i]; j < Lp[i+1]; j++){
+          x(i) -= Lx[j]*x[Li[j]];
+      }
+  }
+}
+
+// Solves LDL'x = b
+void QDLDL_solve(const QDLDL_int  n,
+                    const QDLDL_int  Lp,
+                    const QDLDL_int* Li,
+                    const QDLDL_int* Lx,
+                    const QDLDL_int* Dinv,
+                    QDLDL_float* x){
+
+QDLDL_int i;
+
+QDLDL_Ltsolve(n,Lp,Li,Lx,x);
+for(i = 0; i < n; i++) x[i] *= Dinv[i];
+QDLDL_Lsolve(n,Lp,Li,Lx,x);
+
 }
