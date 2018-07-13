@@ -32,15 +32,14 @@ os_ldl_int osqp_ldl_etree(CscMatrix *A,
         if(etree[i] == UNKNOWN){
           etree[i] = j;
         }
-        Lnz[i]++;
+        Lnz[i]++;         //nonzeros in this column
+        sumLnz += Lnz[i]; //cumulative nonzeros
         work[i] = j;
         i = etree[i];
       }
     }
   }
 
-  //count the total nonzeros
-  for(i = 0; i < n; i++) sumLnz += Lnz[i];
 
   return sumLnz;
 }
