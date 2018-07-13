@@ -8,7 +8,7 @@
    in compressed sparse column form.
 */
 
-os_ldl_int osqp_ldl_etree(CscMatrix *A,
+os_ldl_int os_ldl_etree(CscMatrix *A,
                      os_ldl_int* work,
                      os_ldl_int* Lnz,
                      os_ldl_int* etree){
@@ -46,13 +46,13 @@ os_ldl_int osqp_ldl_etree(CscMatrix *A,
 
 
 
-void osqp_ldl_factor(CscMatrix *A,
+void os_ldl_factor(CscMatrix *A,
                      CscMatrix *L,
                      os_ldl_float* D,
                      os_ldl_float* Dinv,
                      os_ldl_int* Lnz,
                      os_ldl_int* etree,
-                     os_ldl_bool*,bwork,
+                     os_ldl_bool* bwork,
                      os_ldl_int* iwork,
                      os_ldl_float* fwork){
 

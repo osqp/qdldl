@@ -60,7 +60,7 @@ typedef struct SparseMatrix_ CscMatrix; // Compressed sparse column matrix
   *
 */
 
- os_ldl_int osqp_ldl_etree(const CscMatrix *A,
+ os_ldl_int os_ldl_etree(const CscMatrix *A,
                 os_ldl_int* work,
                 os_ldl_int* Lnz,
                 os_ldl_int* etree);
@@ -92,7 +92,7 @@ typedef struct SparseMatrix_ CscMatrix; // Compressed sparse column matrix
 */
 
 
-void osqp_ldl_factor(CscMatrix *A,
+void os_ldl_factor(CscMatrix *A,
                      CscMatrix *L,
                      os_ldl_float* D,
                      os_ldl_float* Dinv,
