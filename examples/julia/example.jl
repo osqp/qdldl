@@ -14,7 +14,7 @@ function qdMatExample()
 end
 
 
-ldllibH = Libdl.dlopen("qdldl")
+ldllibH = Libdl.dlopen("../../build/out/libqdldl." * Base.Libdl.dlext)
 QDLDL_etree    = Libdl.dlsym(ldllibH, :QDLDL_etree)
 QDLDL_factor   = Libdl.dlsym(ldllibH, :QDLDL_factor)
 QDLDL_Lsolve   = Libdl.dlsym(ldllibH, :QDLDL_Lsolve)
