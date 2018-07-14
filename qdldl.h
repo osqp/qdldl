@@ -10,9 +10,9 @@
 #ifndef QDLDL_TYPES_DEFINED
   #include <stdbool.h>
   #define QDLDL_TYPES_DEFINED
-  typedef QDLDL_bool   bool;
-  typedef QDLDL_int    long long;
-  typedef QDLDL_float  double;
+  typedef bool      QDLDL_bool;
+  typedef long long QDLDL_int;
+  typedef double    QDLDL_float;
 # endif
 
 
@@ -86,13 +86,13 @@ extern "C" {
 */
 
 
-void QDLDL_factor(const QDLDL_int   n,
-                  const QDLDL_int* Ap,
-                  const QDLDL_int* Ai,
-                  const QDLDL_int* Ax,
-                  QDLDL_int  Lp,
-                  QDLDL_int* Li,
-                  QDLDL_int* Lx,
+void QDLDL_factor(const QDLDL_int    n,
+                  const QDLDL_int*   Ap,
+                  const QDLDL_int*   Ai,
+                  const QDLDL_float* Ax,
+                  QDLDL_int*   Lp,
+                  QDLDL_int*   Li,
+                  QDLDL_float* Lx,
                   QDLDL_float* D,
                   QDLDL_float* Dinv,
                   const QDLDL_int* Lnz,
@@ -117,11 +117,11 @@ void QDLDL_factor(const QDLDL_int   n,
   *
   *
 */
-void QDLDL_solve(const QDLDL_int  n,
-                 const QDLDL_int  Lp,
-                 const QDLDL_int* Li,
-                 const QDLDL_int* Lx,
-                 const QDLDL_int* Dinv,
+void QDLDL_solve(const QDLDL_int    n,
+                 const QDLDL_int*   Lp,
+                 const QDLDL_int*   Li,
+                 const QDLDL_float* Lx,
+                 const QDLDL_float* Dinv,
                  QDLDL_float* x);
 
 
@@ -141,10 +141,10 @@ void QDLDL_solve(const QDLDL_int  n,
  *
 */
 
-void QDLDL_Lsolve(const QDLDL_int   n,
-                  const QDLDL_int  Lp,
-                  const QDLDL_int* Li,
-                  const QDLDL_int* Lx,
+void QDLDL_Lsolve(const QDLDL_int    n,
+                  const QDLDL_int*   Lp,
+                  const QDLDL_int*   Li,
+                  const QDLDL_float* Lx,
                   QDLDL_float* x);
 
 /**
@@ -163,10 +163,10 @@ void QDLDL_Lsolve(const QDLDL_int   n,
  *
 */
 
-void QDLDL_Ltsolve(const QDLDL_int   n,
-                   const QDLDL_int  Lp,
-                   const QDLDL_int* Li,
-                   const QDLDL_int* Lx,
+void QDLDL_Ltsolve(const QDLDL_int    n,
+                   const QDLDL_int*   Lp,
+                   const QDLDL_int*   Li,
+                   const QDLDL_float* Lx,
                    QDLDL_float* x);
 
 # ifdef __cplusplus

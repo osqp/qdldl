@@ -8,9 +8,9 @@
    in compressed sparse column form.
 */
 
-QDLDL_int QDLDL_etree(const QDLDL_int   n,
-                      const QDLDL_int* Ai,
+QDLDL_int QDLDL_etree(const QDLDL_int  n,
                       const QDLDL_int* Ap,
+                      const QDLDL_int* Ai,
                       QDLDL_int* work,
                       QDLDL_int* Lnz,
                       QDLDL_int* etree){
@@ -48,24 +48,25 @@ QDLDL_int QDLDL_etree(const QDLDL_int   n,
 
 
 
-void QDLDL_factor(const QDLDL_int   n,
-                  const QDLDL_int* Ap,
-                  const QDLDL_int* Ai,
-                  const QDLDL_int* Ax,
-                  QDLDL_int  Lp,
-                  QDLDL_int* Li,
-                  QDLDL_int* Lx,
+void QDLDL_factor(const QDLDL_int    n,
+                  const QDLDL_int*   Ap,
+                  const QDLDL_int*   Ai,
+                  const QDLDL_float* Ax,
+                  QDLDL_int*   Lp,
+                  QDLDL_int*   Li,
+                  QDLDL_float* Lx,
                   QDLDL_float* D,
                   QDLDL_float* Dinv,
                   const QDLDL_int* Lnz,
                   const QDLDL_int* etree,
-                  QDLDL_bool* bwork,
-                  QDLDL_int* iwork,
+                  QDLDL_bool*  bwork,
+                  QDLDL_int*   iwork,
                   QDLDL_float* fwork){
 
   QDLDL_int i,j,k,nnzY, bidx, cidx, nextIdx, nnzE, tmpIdx;
-  QDLDL_int *yMarkers, *yIdx, *elimBuffer, *LNextSpaceInCol;
+  QDLDL_int *yIdx, *elimBuffer, *LNextSpaceInCol;
   QDLDL_float *yVals;
+  QDLDL_bool  *yMarkers;
 
   //partition working memory into pieces
   yMarkers        = bwork;
@@ -180,10 +181,10 @@ void QDLDL_factor(const QDLDL_int   n,
 }
 
 // Solves (L+I)x = b
-void QDLDL_Lsolve(const QDLDL_int   n,
-                  const QDLDL_int  Lp,
-                  const QDLDL_int* Li,
-                  const QDLDL_int* Lx,
+void QDLDL_Lsolve(const QDLDL_int    n,
+                  const QDLDL_int*   Lp,
+                  const QDLDL_int*   Li,
+                  const QDLDL_float* Lx,
                   QDLDL_float* x){
 
 QDLDL_int i,j;
@@ -195,32 +196,32 @@ QDLDL_int i,j;
 }
 
 // Solves (L+I)'x = b
-void QDLDL_Ltsolve(const QDLDL_int  n,
-                   const QDLDL_int  Lp,
-                   const QDLDL_int* Li,
-                   const QDLDL_int* Lx,
+void QDLDL_Ltsolve(const QDLDL_int    n,
+                   const QDLDL_int*   Lp,
+                   const QDLDL_int*   Li,
+                   const QDLDL_float* Lx,
                    QDLDL_float* x){
 
 QDLDL_int i,j;
-  for{i = n-1; i>=0; i--){
+  for(i = n-1; i>=0; i--){
       for(j = Lp[i]; j < Lp[i+1]; j++){
-          x(i) -= Lx[j]*x[Li[j]];
+          x[i] -= Lx[j]*x[Li[j]];
       }
   }
 }
 
-// Solves LDL'x = b
-void QDLDL_solve(const QDLDL_int  n,
-                    const QDLDL_int  Lp,
-                    const QDLDL_int* Li,
-                    const QDLDL_int* Lx,
-                    const QDLDL_int* Dinv,
+// Solves Ax = b where A has given LDL factors
+void QDLDL_solve(const QDLDL_int       n,
+                    const QDLDL_int*   Lp,
+                    const QDLDL_int*   Li,
+                    const QDLDL_float* Lx,
+                    const QDLDL_float* Dinv,
                     QDLDL_float* x){
 
 QDLDL_int i;
 
-QDLDL_Ltsolve(n,Lp,Li,Lx,x);
-for(i = 0; i < n; i++) x[i] *= Dinv[i];
 QDLDL_Lsolve(n,Lp,Li,Lx,x);
+for(i = 0; i < n; i++) x[i] *= Dinv[i];
+QDLDL_Ltsolve(n,Lp,Li,Lx,x);
 
 }

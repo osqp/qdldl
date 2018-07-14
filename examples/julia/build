@@ -1,0 +1,2 @@
+clang -c -Os -Wall -I../../ ../../qdldl.c
+clang -dynamiclib -o qdldl.dylib qdldl.o
