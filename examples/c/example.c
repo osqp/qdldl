@@ -1,7 +1,6 @@
 #include "qdldl.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 void print_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName);
 void print_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName);
