@@ -9,14 +9,14 @@
 #include "qdldl.h"
 
 // Include tests
-#include "basic/basic.h"
+#include "basic/test_basic.h"
 
 
 int tests_run = 0;
 
 
 static char* all_tests() {
-  mu_run_test(basic);
+  mu_run_test(test_basic);
   return 0;
 }
 

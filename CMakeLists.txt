@@ -1,5 +1,5 @@
 # Minimum version required
-# cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.2)
 
 # Project name
 project (qpldl)
@@ -36,7 +36,7 @@ endif (NOT MSVC)
 # Set sources
 # ----------------------------------------------
 set(
-	qpldl_src
+	qdldl_src
 	src/qdldl.c
 	)
 
@@ -50,7 +50,8 @@ set(
 # ----------------------------------------------
 
 # Static library
-add_library (qdldlsatic STATIC ${qdldl_src} ${qdldl_headers})
+add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
+
 
 # Declare include directories for the cmake exported target
 target_include_directories(qdldlstatic
@@ -71,30 +72,29 @@ install(TARGETS qdldlstatic
 
 # Install Headers
 # ----------------------------------------------
-
 install(FILES ${qdldl_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/qdldl")
 
 
 # Install Shared Library
 # ----------------------------------------------
-    # Create qdldl shared library
-    add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
+# Create qdldl shared library
+add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
 
-    # Declare include directories for the cmake exported target
-    target_include_directories(qdldl
-                               PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                                      "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
+# Declare include directories for the cmake exported target
+target_include_directories(qdldl
+	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+	"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
-    # Install qdldl shared library
-    install(TARGETS qdldl
-            EXPORT  ${PROJECT_NAME}
-            LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-            ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-            RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+# Install qdldl shared library
+install(TARGETS qdldl
+	EXPORT  ${PROJECT_NAME}
+	LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-    # Create demo executable (linked to static library)
-    add_executable (qdldl_demo ${PROJECT_SOURCE_DIR}/examples/c/example.c)
-    target_link_libraries (qdldl_example qdldlstatic)
+# Create demo executable (linked to static library)
+add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/c/example.c)
+target_link_libraries (qdldl_example qdldlstatic)
 
 
 # Create CMake packages for the build directory
