@@ -5,6 +5,8 @@ c_bool  = Bool;
 
 function LDLsolve(A::SparseMatrixCSC{c_float,c_int},b::Array{c_float})
 
+    LDLlib = "../out/libqdldl.dylib"
+
     work   = zeros(c_int,A.n)
     Lnz    = zeros(c_int,A.n)
     etree  = zeros(c_int,A.n)
@@ -15,7 +17,7 @@ function LDLsolve(A::SparseMatrixCSC{c_float,c_int},b::Array{c_float})
     Ax = A.nzval;
 
     #Construct the elimination tree and column counts for A
-    sumLnz = ccall((:QDLDL_etree,"qdldl"),c_int,(c_int,Ptr{c_int},Ptr{c_int},Ptr{c_int},Ptr{c_int},Ptr{c_int}),A.n,Ap,Ai,work,Lnz,etree)
+    sumLnz = ccall((:QDLDL_etree,LDLlib),c_int,(c_int,Ptr{c_int},Ptr{c_int},Ptr{c_int},Ptr{c_int},Ptr{c_int}),A.n,Ap,Ai,work,Lnz,etree)
 
     if(sumLnz < 0)
         return "Abort on etree";
@@ -37,7 +39,7 @@ function LDLsolve(A::SparseMatrixCSC{c_float,c_int},b::Array{c_float})
     bwork            = zeros(c_bool,Ln)
 
     #call the C factorization function
-    posCountD = ccall((:QDLDL_factor,"qdldl"),c_int,
+    posCountD = ccall((:QDLDL_factor,LDLlib),c_int,
          (     c_int,              #n
                Ptr{c_int},         #Ap
                Ptr{c_int},         #Ai
@@ -63,7 +65,7 @@ function LDLsolve(A::SparseMatrixCSC{c_float,c_int},b::Array{c_float})
 
     #call the C solve function
     x = copy(b)
-    ccall((:QDLDL_solve,"qdldl"),Void,
+    ccall((:QDLDL_solve,LDLlib),Void,
          (     c_int,              #n
                Ptr{c_int},         #Lp
                Ptr{c_int},         #Li
@@ -178,11 +180,7 @@ println("Big ND                 : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = qdRandom(100,0);
 b = randn(c_float,A.n);
-println("Bif PD                 : ", norm(A\b- LDLsolve(triu(A),b)))
-
-A = speye(0)*0
-b = zeros(0)
-println("zero size              : ", norm(A\b- LDLsolve(triu(A),b)))
+println("Big PD                 : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = sparse([1.0 5.0; 5.0 1.0])
 b = randn(c_float,A.n);
