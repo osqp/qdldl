@@ -100,7 +100,9 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   }
 
   // First element of the diagonal D.
-  D[0]    = Ax[0];
+  D[0]      = Ax[0];
+  if(D[0] == 0){return -1;}
+  if(D[0]  > 0){positiveValuesInD++;}
   Dinv[0] = 1/D[0];
 
   //Start from 1 here. The upper LH corner is trivially 0
