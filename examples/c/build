@@ -1,0 +1,1 @@
+clang -Os -Wall -I../../ ../../qdldl.c example.c -o example

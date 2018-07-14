@@ -39,9 +39,9 @@ extern "C" {
   * @param   n     number of columns in CSC matrix A (assumed square)
   * @param  Ap     column pointers (size n+1) for columns of A
   * @param  Ai     row indices of A.  Has Ap[n] elements
-  * @param  work   work vector (no meaning on return)
-  * @param  Lnz    count of nonzeros in each column of L below diagonal
-  * @param  etree  elimination tree
+  * @param  work   work vector (size n) (no meaning on return)
+  * @param  Lnz    count of nonzeros in each column of L (size n) below diagonal
+  * @param  etree  elimination tree (size n)
   * @return total  sum of Lnz (i.e. total nonzeros in L below diagonal)
   *
   *
