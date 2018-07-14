@@ -23,7 +23,10 @@ QDLDL_solve    = Libdl.dlsym(ldllibH, :QDLDL_solve)
 
 
 A = qdMatExample()::SparseMatrixCSC{c_float,c_int}
+A = sparse([1.0 1.0;1.0 -1.0]);
 b = cumsum(ones(c_float(A.n)));
+
+A = A::SparseMatrixCSC{c_float,c_int}
 
 println("\n-------------------")
 println("Testing: QDLDL_etree")
@@ -63,7 +66,7 @@ iwork            = zeros(c_int,Ln*3)
 bwork            = zeros(c_bool,Ln)
 
 #call the C factorization function
-ccall(QDLDL_factor,Void,
+ccall(QDLDL_factor,c_int,
      (     c_int,              #n
            Ptr{c_int},         #Ap
            Ptr{c_int},         #Ai
@@ -104,4 +107,4 @@ ccall(QDLDL_solve,Void,
 
 println("A\b solve tolerance: ", norm(x-A\b, Inf)  );
 
-#Libdl.dlclose(ldllibH)
+Libdl.dlclose(ldllibH)

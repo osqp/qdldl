@@ -42,7 +42,9 @@ extern "C" {
   * @param  work   work vector (size n) (no meaning on return)
   * @param  Lnz    count of nonzeros in each column of L (size n) below diagonal
   * @param  etree  elimination tree (size n)
-  * @return total  sum of Lnz (i.e. total nonzeros in L below diagonal)
+  * @return total  sum of Lnz (i.e. total nonzeros in L below diagonal). Returns
+  *                -1 if the input does not have triu structure or is missing entries
+  *                on the diagonal
   *
   *
 */
@@ -80,13 +82,15 @@ extern "C" {
   * @param  etree  elimination tree as as given by osqp_ldl_etree (not modified)
   * @param  bwork  working array of bools. Length is n
   * @param  iwork  working array of integers. Length is 3*n
-  * @return fwork  working array of floats. Length is n
-  *
+  * @param  fwork  working array of floats. Length is n
+  * @return        Returns a count of the number of positive elements
+  *                in D.  Returns -1 and exits immediately if any element
+  *                of D evaluates exactly to zero (matrix is not quasidefinite)
   *
 */
 
 
-void QDLDL_factor(const QDLDL_int    n,
+QDLDL_int QDLDL_factor(const QDLDL_int    n,
                   const QDLDL_int*   Ap,
                   const QDLDL_int*   Ai,
                   const QDLDL_float* Ax,
