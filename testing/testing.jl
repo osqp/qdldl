@@ -107,7 +107,7 @@ function pdRandom(n,density)
 end
 
 println("Things that should fail")
-println("-----------------------")
+println("----------------------------")
 A = sparse([0.0 1.0; 1.0 0.0])
 b = randn(c_float,A.n);
 println("non LDL decomposable   : ",  LDLsolve(triu(A),b))
@@ -139,8 +139,9 @@ println("Zero with allocation   : ",  LDLsolve(triu(A),b))
 
 
 println("\n\n")
-println("Things that should work")
-println("-----------------------")
+println("Things that should work   ")
+println("(Errors are relative to A\\b)")
+println("-----------------------------")
 
 A = sparse([1.0 1.0;1.0 -1.0]);
 b = cumsum(ones(c_float(A.n)));
