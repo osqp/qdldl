@@ -11,5 +11,5 @@ A free LDL factorisation routine
 - [ ] Add proper `README` for how to use it
 - [x] Add example (in `/example` folder)
 - [ ] Add `unittests` and code coverage
-  - [ ] Identity matrix
-  - [ ] Passing stupid stuff
+  - [x] Identity matrix
+  - [x] Passing stupid stuff
