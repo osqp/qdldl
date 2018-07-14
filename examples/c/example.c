@@ -5,6 +5,7 @@
 
 void print_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName);
 void print_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName);
+void print_line(void);
 
 const QDLDL_int   An   = 10;
 const QDLDL_int   Ap[] = {0, 1, 2, 4, 5, 6, 8, 10, 12, 14, 17};
@@ -94,29 +95,35 @@ int main()
   /*--------------------------------
    * print factors and solution
    *---------------------------------*/
+  printf("\n");
   printf("A (CSC format):\n");
+  print_line();
   print_arrayi(Ap, An + 1, "A.p");
   print_arrayi(Ai, Ap[An], "A.i");
   print_arrayf(Ax, Ap[An], "A.x");
   printf("\n\n");
 
-  printf("etree results:\n");
+  printf("elimination tree:\n");
+  print_line();
   print_arrayi(etree, Ln, "etree");
   print_arrayi(Lnz, Ln, "Lnz");
   printf("\n\n");
 
   printf("L (CSC format):\n");
+  print_line();
   print_arrayi(Lp, Ln + 1, "L.p");
   print_arrayi(Li, Lp[Ln], "L.i");
   print_arrayf(Lx, Lp[Ln], "L.x");
   printf("\n\n");
 
-  printf("D (vector format):\n");
-  print_arrayf(D, An, "D");
-  print_arrayf(Dinv, An, "D^{-1}");
+  printf("D:\n");
+  print_line();
+  print_arrayf(D, An,    "diag(D)     ");
+  print_arrayf(Dinv, An, "diag(D^{-1})");
   printf("\n\n");
 
   printf("solve results:\n");
+  print_line();
   print_arrayf(b, An, "b");
   print_arrayf(x, An, "A\\b");
   printf("\n\n");
@@ -143,6 +150,9 @@ return 0 ;
 }
 
 
+void print_line(void){
+  printf("--------------------------\n");
+}
 
 void print_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName){
 
@@ -160,7 +170,7 @@ void print_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName){
   QDLDL_int i;
   printf("%s = [",varName);
   for(i=0; i< n; i++){
-    printf("%.4g,",data[i]);
+    printf("%.3g,",data[i]);
   }
   printf("]\n");
 
