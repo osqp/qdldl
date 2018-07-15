@@ -5,7 +5,7 @@ c_bool  = Bool;
 
 function LDLsolve(A::SparseMatrixCSC{c_float,c_int},b::Array{c_float})
 
-    LDLlib = "../out/libqdldl.dylib"
+    LDLlib = "../../build/out/libqdldl.dylib"
 
     work   = zeros(c_int,A.n)
     Lnz    = zeros(c_int,A.n)
