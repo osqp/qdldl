@@ -147,7 +147,7 @@ if (UNITTESTS)
     # Add test_headers and codegen_test_headers
     add_subdirectory(tests)
 
-    # Direct linear solver testing
+    # Direct qdldl solver testing
     add_executable(qdldl_tester
                 ${PROJECT_SOURCE_DIR}/tests/qdldl_tester.c ${PROJECT_SOURCE_DIR}/tests/minunit.h
                 ${test_headers})

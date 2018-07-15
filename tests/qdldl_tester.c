@@ -9,7 +9,7 @@
 #include "qdldl.h"
 
 // Include tests
-#include "basic/test_basic.h"
+#include "test_basic.h"
 
 
 int tests_run = 0;

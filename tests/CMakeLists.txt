@@ -1,6 +1,6 @@
-# Add subdirectories of all the tests
-add_subdirectory(basic)
+set(test_headers
+	${CMAKE_CURRENT_SOURCE_DIR}/test_basic.h
+	PARENT_SCOPE)
 
-set(test_headers ${headers} PARENT_SCOPE)
-
+# Includ this directory for test headers
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
