@@ -143,6 +143,10 @@ println("Things that should work   ")
 println("(Errors are relative to A\\b)")
 println("-----------------------------")
 
+A = qdMatExample();
+b = randn(c_float,A.n);
+println("Basic exampple         : ",  LDLsolve(triu(A),b))
+
 A = sparse([1.0 1.0;1.0 -1.0]);
 b = cumsum(ones(c_float(A.n)));
 println("2x2                    : ", norm(A\b- LDLsolve(triu(A),b)))
