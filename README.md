@@ -55,7 +55,7 @@ QDLDL uses its internal types for integer floats and booleans. If you want to ov
 
 ### Main API
 
-The QDLDL API consists in 5 functions documented in `include/qdldl.h`.
+The QDLDL API consists in 5 functions documented in [`include/qdldl.h`](./include/qdldl.h).
 For more details see the example in [`examples/c/example.c`](./examples/c/example.c).
 
 **N.B.** There is **no memory allocation** performed in these routines. The user is assumed to have the working vectors already allocated.
