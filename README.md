@@ -64,7 +64,7 @@ For more details see the example in [`examples/c/example.c`](./examples/c/exampl
 
 Here is a brief summary.
 
-* `QDLDL_etree`: compute the elimination tree for the factorization `A = LDL^T`
+* `QDLDL_etree`: compute the elimination tree for the factorization `A = LDL'`
 * `QDLDL_factor`: return the factors `L`, `D` and `Dinv = 1./D`
 * `QDLDL_solve`: solve the linear system `LDL'x = b`
 * `QDLDL_Lsolve`: solve `(L + I)x = b`
