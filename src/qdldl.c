@@ -76,6 +76,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   QDLDL_int i,j,k,nnzY, bidx, cidx, nextIdx, nnzE, tmpIdx;
   QDLDL_int *yIdx, *elimBuffer, *LNextSpaceInCol;
   QDLDL_float *yVals;
+  QDLDL_float yVals_cidx;
   QDLDL_bool  *yMarkers;
   QDLDL_int   positiveValuesInD = 0;
 
@@ -168,18 +169,19 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
       // loop along the elements in this
       // column of L and subtract to solve to y
       tmpIdx = LNextSpaceInCol[cidx];
+      yVals_cidx = yVals[cidx];
       for(j = Lp[cidx]; j < tmpIdx; j++){
-        yVals[Li[j]] -= Lx[j]*yVals[cidx];
+        yVals[Li[j]] -= Lx[j]*yVals_cidx;
       }
 
       //Now I have the cidx^th element of y = L\b.
       //so compute the corresponding element of
       //this row of L and put it into the right place
       Li[tmpIdx] = k;
-      Lx[tmpIdx] = yVals[cidx]*Dinv[cidx];
+      Lx[tmpIdx] = yVals_cidx *Dinv[cidx];
 
       //D[k] -= yVals[cidx]*yVals[cidx]*Dinv[cidx];
-      D[k] -= yVals[cidx]*Lx[tmpIdx];
+      D[k] -= yVals_cidx*Lx[tmpIdx];
       LNextSpaceInCol[cidx]++;
 
       //reset the yvalues and indices back to zero and UNUSED
