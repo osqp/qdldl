@@ -27,7 +27,7 @@ test_script:
 - cd build
 - cmake -G "%CMAKE_PROJECT%" -DUNITTESTS=ON ..
 - cmake --build .
-- call "%APPVEYOR_BUILD_FOLDER%\build\out\qdldl_tester.exe"
+- call "%APPVEYOR_BUILD_FOLDER%\build\out\Debug\qdldl_tester.exe"
 
 # on_finish:
 #   # Uncomment for remote desktop debug
