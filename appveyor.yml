@@ -25,12 +25,12 @@ before_build:
 
 # Perform tests
 test_script:
-  - cd %APPVEYOR_BUILD_FOLDER%
-  - mkdir build
-  - cd build
-  - cmake -G "%CMAKE_PROJECT%" -DUNITTESTS=ON ..
-  - cmake --build .
-  - %APPVEYOR_BUILD_FOLDER%\build\out\qdldl_tester.exe
+- cd %APPVEYOR_BUILD_FOLDER%
+- mkdir build
+- cd build
+- cmake -G "%CMAKE_PROJECT%" -DUNITTESTS=ON ..
+- cmake --build .
+- %APPVEYOR_BUILD_FOLDER%\build\out\qdldl_tester.exe
 
 # on_finish:
 #   # Uncomment for remote desktop debug
