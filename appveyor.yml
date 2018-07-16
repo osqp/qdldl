@@ -12,10 +12,6 @@ init:
   # Uncomment for remote desktop debug
   # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
-# install:
-#   - "%APPVEYOR_BUILD_FOLDER%\\ci\\appveyor\\install.cmd"
-#
-
 
 # Setup Cmake project
 before_build:
