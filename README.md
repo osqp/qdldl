@@ -2,9 +2,7 @@
 A free LDL factorisation routine
 
 [![Build Status](https://travis-ci.org/goulart-paul/QDLDL.svg?branch=master)](https://travis-ci.org/goulart-paul/QDLDL)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/1h2dklt9yoixlgt6/branch/master?svg=true)](https://ci.appveyor.com/project/bstellato/qdldl/branch/master)
-
+[![Build status](https://ci.appveyor.com/api/projects/status/github/goulart-paul/qdldl?branch=master&svg=true)](https://ci.appveyor.com/project/goulart-paul/qdldl/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/goulart-paul/QDLDL/badge.svg)](https://coveralls.io/github/goulart-paul/QDLDL)
 
 
