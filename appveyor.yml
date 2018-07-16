@@ -1,4 +1,4 @@
-# Not a .NET project. We build it in the install script
+# Not a .NET project. We build it in the test script
 build: false
 
 platform:
