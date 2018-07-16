@@ -8,7 +8,7 @@ platform:
 environment:
   CMAKE_PROJECT: Visual Studio 15 2017
 
-init:
+# init:
   # Uncomment for remote desktop debug
   # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
@@ -25,12 +25,12 @@ before_build:
 
 # Perform tests
 test_script:
-- cd %APPVEYOR_BUILD_FOLDER%
+- cd "%APPVEYOR_BUILD_FOLDER%"
 - mkdir build
 - cd build
 - cmake -G "%CMAKE_PROJECT%" -DUNITTESTS=ON ..
 - cmake --build .
-- %APPVEYOR_BUILD_FOLDER%\build\out\qdldl_tester.exe
+- call "%APPVEYOR_BUILD_FOLDER%\build\out\qdldl_tester.exe"
 
 # on_finish:
 #   # Uncomment for remote desktop debug
