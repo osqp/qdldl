@@ -10,6 +10,7 @@ A free LDL factorisation routine
 - [ ] Add minor optimizations to the code
 - [ ] Add proper `README` for how to use it
 - [x] Add example (in `/example` folder)
-- [ ] Add `unittests` and code coverage
+- [x] Add `unittests`
   - [x] Identity matrix
   - [x] Passing stupid stuff
+- [ ] Add code coverage 

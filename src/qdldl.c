@@ -93,6 +93,8 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   }
 
   // set all Yidx to be 'unused' initially
+  //in each column of L, the next available space
+  //to start is just the first space in the column
   for(i = 0; i < n; i++){
     yMarkers[i]  = UNUSED;
     yVals[i]     = 0.0;
