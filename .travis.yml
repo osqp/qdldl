@@ -34,10 +34,10 @@ script:
   out/qdldl_tester
   set +e
 
-  # Pefrorm code coverage (only in Linux case)
+
+# Pefrorm code coverage (only in Linux case)
 after_success:
 - |
-  set -e
   cd ${TRAVIS_BUILD_DIR}
   if [[ $TRAVIS_OS_NAME == "linux" ]]; then
       cd ${TRAVIS_BUILD_DIR}/build
@@ -50,5 +50,4 @@ after_success:
       lcov --list coverage.info # debug before upload
       coveralls-lcov coverage.info # uploads to coveralls
   fi
-  set +e
 
