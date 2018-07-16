@@ -76,6 +76,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   QDLDL_int i,j,k,nnzY, bidx, cidx, nextIdx, nnzE, tmpIdx;
   QDLDL_int *yIdx, *elimBuffer, *LNextSpaceInCol;
   QDLDL_float *yVals;
+  QDLDL_float yVals_cidx;
   QDLDL_bool  *yMarkers;
   QDLDL_int   positiveValuesInD = 0;
 
@@ -86,16 +87,18 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   LNextSpaceInCol = iwork + n*2;
   yVals           = fwork;
 
-  //Assign basic structure to L.
-  Lp[0] = 0;
-  for(i = 0; i < n; i++){
-    Lp[i+1] = Lp[i] + Lnz[i];   //cumsum, total at the end
-  }
 
-  // set all Yidx to be 'unused' initially
-  //in each column of L, the next available space
-  //to start is just the first space in the column
+
+  Lp[0] = 0; //first column starts at index zero
+
   for(i = 0; i < n; i++){
+
+    //compute L column indices
+    Lp[i+1] = Lp[i] + Lnz[i];   //cumsum, total at the end
+
+    // set all Yidx to be 'unused' initially
+    //in each column of L, the next available space
+    //to start is just the first space in the column
     yMarkers[i]  = UNUSED;
     yVals[i]     = 0.0;
     LNextSpaceInCol[i] = Lp[i];
@@ -103,8 +106,8 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
 
   // First element of the diagonal D.
   D[0]      = Ax[0];
-  if(D[0] == 0){return -1;}
-  if(D[0]  > 0){positiveValuesInD++;}
+  if(D[0] == 0.0){return -1;}
+  if(D[0]  > 0.0){positiveValuesInD++;}
   Dinv[0] = 1/D[0];
 
   //Start from 1 here. The upper LH corner is trivially 0
@@ -168,18 +171,19 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
       // loop along the elements in this
       // column of L and subtract to solve to y
       tmpIdx = LNextSpaceInCol[cidx];
+      yVals_cidx = yVals[cidx];
       for(j = Lp[cidx]; j < tmpIdx; j++){
-        yVals[Li[j]] -= Lx[j]*yVals[cidx];
+        yVals[Li[j]] -= Lx[j]*yVals_cidx;
       }
 
       //Now I have the cidx^th element of y = L\b.
       //so compute the corresponding element of
       //this row of L and put it into the right place
       Li[tmpIdx] = k;
-      Lx[tmpIdx] = yVals[cidx]*Dinv[cidx];
+      Lx[tmpIdx] = yVals_cidx *Dinv[cidx];
 
       //D[k] -= yVals[cidx]*yVals[cidx]*Dinv[cidx];
-      D[k] -= yVals[cidx]*Lx[tmpIdx];
+      D[k] -= yVals_cidx*Lx[tmpIdx];
       LNextSpaceInCol[cidx]++;
 
       //reset the yvalues and indices back to zero and UNUSED

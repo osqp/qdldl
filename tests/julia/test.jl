@@ -145,7 +145,7 @@ println("-----------------------------")
 
 A = qdMatExample();
 b = randn(c_float,A.n);
-println("Basic exampple         : ",  LDLsolve(triu(A),b))
+println("Basic example          : ",  norm(A\b-LDLsolve(triu(A),b)))
 
 A = sparse([1.0 1.0;1.0 -1.0]);
 b = cumsum(ones(c_float(A.n)));
