@@ -47,8 +47,9 @@ QDLDL_float vec_diff_norm(QDLDL_float* x, QDLDL_float* y, QDLDL_int len){
 
   QDLDL_float maxDiff = 0.0;
   QDLDL_float elDiff  = 0.0;
+  QDLDL_int i;
 
-  for(QDLDL_int i = 0; i < len; i++){
+  for(i = 0; i < len; i++){
     elDiff  = x[i] - y[i];
     maxDiff = (elDiff > maxDiff) ? elDiff : ((-elDiff > maxDiff) ? -elDiff : maxDiff);
   }
