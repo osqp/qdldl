@@ -41,7 +41,7 @@ To install (uninstall) the libraries and headers you can simply run `make instal
 ## Calling QDLDL
 
 ### Including the header
-QDLDL uses its own default internal types for integers, floats and booleans. If you want to overwrite these types with your own you must first define them explicitly before including the library
+QDLDL uses its own default internal types for integers, floats and booleans. If you want to override these types with your own you must first define them explicitly before including the library
 ```c
 #typedef mybool QDLDL_bool;
 #typedef myint QDLDL_int;
@@ -72,7 +72,7 @@ In the above function calls the matrices `A` and `L` are stored in compressed sp
 
 The matrices `D` and `Dinv` are both diagonal matrices, with the diagonal values stored in an array.
 
-The matrix input `A` should be quasidefinite.   The API provides some (non-comprehensive) error checking to protect against non-quasidefinite or non-upper triangular inputs, both in the elimination tree calculation and during matrix factorisation. 
+The matrix input `A` should be quasidefinite.   The API provides some (non-comprehensive) error checking to protect against non-quasidefinite or non-upper triangular inputs.
 
 
 ## Linking QDLDL
