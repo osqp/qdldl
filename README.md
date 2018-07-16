@@ -7,7 +7,7 @@ A free LDL factorisation routine for quasi-definite linear systems: `Ax=b`
 
 
 ## Getting started
-To start using QDLDL just clone the repository
+To start using QDLDL, first clone the repository
 
 ```bash
 git clone https://github.com/oxfordcontrol/qdldl.git
@@ -15,7 +15,7 @@ git clone https://github.com/oxfordcontrol/qdldl.git
 
 ### Build
 
-To build it, you need to install [cmake](https://cmake.org/) and run
+To build QDLDL, you need to install [cmake](https://cmake.org/) and run
 
 ```bash
 mkdir build/
@@ -24,13 +24,13 @@ cmake ..
 make
 ```
 
-This will generate an `out/` folder where you will have:
+This will generate an `out/` folder with contents:
 
 - `qdldl_example`: a **code example** from [`examples/c/example.c`](./examples/c/example.c)
 - `libqdldlstatic`: a static library
 - `libqdldl`: a dynamic library
 
-**N.B.** All files will have the extension relative to the operating system used.
+**N.B.** All files will have file extensions appropriate to your operating system.
 
 
 ### Install/Uninstall
@@ -41,13 +41,13 @@ To install (uninstall) the libraries and headers you can simply run `make instal
 ## Calling QDLDL
 
 ### Including the header
-QDLDL uses its internal types for integer floats and booleans. If you want to overwrite them with your worn you need to redefine them before including the library
+QDLDL uses its own default internal types for integers, floats and booleans. If you want to overwrite these types with your own you must first define them explicitly before including the library
 ```c
 #typedef mybool QDLDL_bool;
 #typedef myint QDLDL_int;
 #typedef myfloat QDLDL_float;
 
-/* Need to specify this to avoid types redefinition */
+/* Then define this symbol to prevent type redefinitions */
 #define QDLDL_TYPES_DEFINED
 
 #include "qdldl.h"
@@ -55,24 +55,28 @@ QDLDL uses its internal types for integer floats and booleans. If you want to ov
 
 ### Main API
 
-The QDLDL API consists in 5 functions documented in [`include/qdldl.h`](./include/qdldl.h).
-For more details see the example in [`examples/c/example.c`](./examples/c/example.c).
+The QDLDL API consists of 5 functions documented in [`include/qdldl.h`](./include/qdldl.h).
+For more details and a working example see [`examples/c/example.c`](./examples/c/example.c).
 
-**N.B.** There is **no memory allocation** performed in these routines. The user is assumed to have the working vectors already allocated.
+**N.B.** There is **no memory allocation** performed in these routines. The user is assumed to have the working vectors already allocated.   
 
 Here is a brief summary.
 
-* `QDLDL_etree`: compute the elimination tree for the factorization `A = LDL'`
+* `QDLDL_etree`: compute the elimination tree for the quasidefinite matrix factorization `A = LDL'`
 * `QDLDL_factor`: return the factors `L`, `D` and `Dinv = 1./D`
-* `QDLDL_solve`: solve the linear system `LDL'x = b`
-* `QDLDL_Lsolve`: solve `(L + I)x = b`
-* `QDLDL_Ltsolve`: solve `(L + I)'x = b`
+* `QDLDL_solve`: solves the linear system `LDL'x = b`
+* `QDLDL_Lsolve`: solves `Lx = b`
+* `QDLDL_Ltsolve`: solves `L'x = b`
+
+In the above function calls the matrices A and L are stored in compressed sparse column (CSC) format.   The matrix A is assumed to be symmetric and only the upper triangular portion of A should be passed to the API.   The factor L is lower triangular with implicit ones on the diagonal (i.e. the diagonal of L is not stored as part of the CSC formatted data.)
+
+The matrices D and D^{-1} are both diagonal matrices, with the diagonal values stored in array.
 
 
 ## Linking QDLDL
 
 ### Basic Example
-A basic example appears in [`examples/c/example.c`](./examples/c/example.c) and is compiled using cmake and the `CMakeLists.txt` file in the root folder
+A basic example appears in [`examples/c/example.c`](./examples/c/example.c) and is compiled using cmake and the `CMakeLists.txt` file in the root folder.
 
 
 ### Including in a cmake project
@@ -96,7 +100,7 @@ for dynamic linking the shared library should be available in your path.
 
 ## The algorithm
 
-The algorithm is an independent implementation of the elimination tree and factoring procedures proposed in
+The algorithm is an independent implementation of the elimination tree and factorisation procedures outlined in
 
 > T. A Davis. [Algorithm 849: a concise sparse cholesky factorization package](https://dl.acm.org/citation.cfm?id=1114277). ACM Trans. Math. Softw., 31(4):587–591, 2005.
 
@@ -106,10 +110,3 @@ The algorithm is an independent implementation of the elimination tree and facto
 - [Paul Goulart](http://users.ox.ac.uk/~engs1373/): main development
 - [Bartolomeo Stellato](https://stellato.io/): code refactoring and testing
 - [Goran Banjac](http://control.ee.ethz.ch/~gbanjac/)
-
-
-
-
-
-
-
