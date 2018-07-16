@@ -8,13 +8,10 @@ platform:
 environment:
   CMAKE_PROJECT: Visual Studio 15 2017
 
-# init:
-  # Uncomment for remote desktop debug
-  # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-
+init:
+# Uncomment for remote desktop debug
+# - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 # Setup Cmake project
-before_build:
 - cmd: >-
     IF "%PLATFORM%"=="x64" (
     call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
