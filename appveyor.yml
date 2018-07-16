@@ -6,7 +6,7 @@ platform:
   - x86
 
 environment:
-  CMAKE_PROJECT: Visual Studio 15 2017
+  CMAKE_PROJECT: "Visual Studio 14 2015"
 
 init:
 # Uncomment for remote desktop debug
