@@ -17,6 +17,7 @@ const QDLDL_float  b[] = {1,2,3,4,5,6,7,8,9,10};
 int main()
 
 {
+  QDLDL_int i; // Counter
 
   //data for L and D factors
   QDLDL_int Ln = An;
@@ -88,7 +89,7 @@ int main()
   x = (QDLDL_float*)malloc(sizeof(QDLDL_float)*An);
 
   //when solving A\b, start with x = b
-  for(int i=0;i < Ln; i++) x[i] = b[i];
+  for(i=0;i < Ln; i++) x[i] = b[i];
   QDLDL_solve(Ln,Lp,Li,Lx,Dinv,x);
 
   /*--------------------------------
