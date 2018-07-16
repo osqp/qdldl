@@ -1,9 +1,9 @@
 # QDLDL
 A free LDL factorisation routine
 
-[![Build Status](https://travis-ci.org/goulart-paul/QDLDL.svg?branch=master)](https://travis-ci.org/goulart-paul/QDLDL)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/goulart-paul/qdldl?branch=master&svg=true)](https://ci.appveyor.com/project/goulart-paul/qdldl/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/goulart-paul/QDLDL/badge.svg)](https://coveralls.io/github/goulart-paul/QDLDL)
+[![Build Status](https://travis-ci.org/oxfordcontrol/qdldl.svg?branch=master)](https://travis-ci.org/oxfordcontrol/qdldl)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/oxfordcontrol/qdldl?branch=master&svg=true)](https://ci.appveyor.com/project/oxfordcontrol/qdldl/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/oxfordcontrol/qdldl/badge.svg)](https://coveralls.io/github/oxfordcontrol/qdldl)
 
 
 ## TODO

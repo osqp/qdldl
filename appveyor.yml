@@ -28,7 +28,7 @@ test_script:
   - cd %APPVEYOR_BUILD_FOLDER%
   - mkdir build
   - cd build
-  - cmake -G"%CMAKE_PROJECT%" -DUNITTESTS=ON ..
+  - cmake -G "%CMAKE_PROJECT%" -DUNITTESTS=ON ..
   - cmake --build .
   - %APPVEYOR_BUILD_FOLDER%\build\out\qdldl_tester.exe
 
