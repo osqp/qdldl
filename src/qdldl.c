@@ -87,16 +87,18 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   LNextSpaceInCol = iwork + n*2;
   yVals           = fwork;
 
-  //Assign basic structure to L.
-  Lp[0] = 0;
-  for(i = 0; i < n; i++){
-    Lp[i+1] = Lp[i] + Lnz[i];   //cumsum, total at the end
-  }
 
-  // set all Yidx to be 'unused' initially
-  //in each column of L, the next available space
-  //to start is just the first space in the column
+
+  Lp[0] = 0; //first column starts at index zero
+
   for(i = 0; i < n; i++){
+
+    //compute L column indices
+    Lp[i+1] = Lp[i] + Lnz[i];   //cumsum, total at the end
+
+    // set all Yidx to be 'unused' initially
+    //in each column of L, the next available space
+    //to start is just the first space in the column
     yMarkers[i]  = UNUSED;
     yVals[i]     = 0.0;
     LNextSpaceInCol[i] = Lp[i];
