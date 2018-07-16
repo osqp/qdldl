@@ -11,28 +11,23 @@ sudo: required
 
 install:
 - |
-  # Install lcov
+  # Install lcov only on linux
   if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       sudo apt-get install -y lcov
-  else if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew update
-      brew install lcov
-      fi
+      # Install coveralls uploader
+      gem install coveralls-lcov
   fi
-  # Install coveralls uploader
-  gem install coveralls-lcov
 
 
 # Build main and tests
 script:
 - |
-  set -e
+  cd ${TRAVIS_BUILD_DIR}
   mkdir -p build
   cd build
   cmake -DUNITTESTS=ON -DCOVERAGE=ON ..
   make
   out/qdldl_tester
-  set +e
 
 
 # Pefrorm code coverage (only in Linux case)
