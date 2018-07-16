@@ -1,0 +1,17 @@
+language: C
+
+os:
+  - linux
+  - osx
+sudo: required
+
+install: bash ci/travis/install.sh
+
+script:
+    # Build main and tests
+  - mkdir -p build
+  - cd build
+  - cmake -DUNITTESTS=ON ..
+  - make
+  - out/qdldl_tester
+
