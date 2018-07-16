@@ -68,9 +68,9 @@ Here is a brief summary.
 * `QDLDL_Lsolve`: solves `Lx = b`
 * `QDLDL_Ltsolve`: solves `L'x = b`
 
-In the above function calls the matrices A and L are stored in compressed sparse column (CSC) format.   The matrix A is assumed to be symmetric and only the upper triangular portion of A should be passed to the API.   The factor L is lower triangular with implicit ones on the diagonal (i.e. the diagonal of L is not stored as part of the CSC formatted data.)
+In the above function calls the matrices `A` and `L` are stored in compressed sparse column (CSC) format.   The matrix `A` is assumed to be symmetric and only the upper triangular portion of A should be passed to the API.   The factor `L` is lower triangular with implicit ones on the diagonal (i.e. the diagonal of L is not stored as part of the CSC formatted data.)
 
-The matrices D and D^{-1} are both diagonal matrices, with the diagonal values stored in array.
+The matrices `D` and `Dinv` are both diagonal matrices, with the diagonal values stored in array.
 
 
 ## Linking QDLDL
