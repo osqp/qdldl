@@ -43,9 +43,9 @@ To install (uninstall) the libraries and headers you can simply run `make instal
 ### Including the header
 QDLDL uses its own default internal types for integers, floats and booleans. If you want to override these types with your own you must first define them explicitly before including the library
 ```c
-#typedef mybool QDLDL_bool;
-#typedef myint QDLDL_int;
-#typedef myfloat QDLDL_float;
+typedef mybool QDLDL_bool;
+typedef myint QDLDL_int;
+typedef myfloat QDLDL_float;
 
 /* Then define this symbol to prevent type redefinitions */
 #define QDLDL_TYPES_DEFINED
@@ -58,7 +58,7 @@ QDLDL uses its own default internal types for integers, floats and booleans. If 
 The QDLDL API consists of 5 functions documented in [`include/qdldl.h`](./include/qdldl.h).
 For more details and a working example see [`examples/c/example.c`](./examples/c/example.c).
 
-**N.B.** There is **no memory allocation** performed in these routines. The user is assumed to have the working vectors already allocated.   
+**N.B.** There is **no memory allocation** performed in these routines. The user is assumed to have the working vectors already allocated.
 
 Here is a brief summary.
 
