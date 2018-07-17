@@ -44,14 +44,12 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
           etree[i] = j;
         }
         Lnz[i]++;         //nonzeros in this column
+        sumLnz += 1;      // Increase the total number of nonzeros
         work[i] = j;
         i = etree[i];
       }
     }
   }
-
-  //count the total nonzeros
-  for(i = 0; i < n; i++) sumLnz += Lnz[i];
 
   return sumLnz;
 }
