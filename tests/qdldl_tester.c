@@ -22,6 +22,7 @@ int ldl_factor_solve(QDLDL_int An, QDLDL_int* Ap,QDLDL_int* Ai,
 #include "test_tril_structure.h"
 #include "test_two_by_two.h"
 #include "test_zero_on_diag.h"
+#include "test_osqp_kkt.h"
 
 
 int tests_run = 0;
@@ -36,6 +37,7 @@ static char* all_tests() {
   mu_run_test(test_tril_structure);
   mu_run_test(test_two_by_two);
   mu_run_test(test_zero_on_diag);
+  mu_run_test(test_osqp_kkt);
   return 0;
 }
 

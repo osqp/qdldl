@@ -7,6 +7,7 @@ set(test_headers
 	${CMAKE_CURRENT_SOURCE_DIR}/test_tril_structure.h
 	${CMAKE_CURRENT_SOURCE_DIR}/test_two_by_two.h
 	${CMAKE_CURRENT_SOURCE_DIR}/test_zero_on_diag.h
+	${CMAKE_CURRENT_SOURCE_DIR}/test_osqp_kkt.h
 	PARENT_SCOPE)
 
 # Include this directory for test headers
