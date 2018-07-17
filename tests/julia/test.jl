@@ -145,48 +145,58 @@ println("-----------------------------")
 
 A = qdMatExample();
 b = randn(c_float,A.n);
-println("Basic exampple         : ",  LDLsolve(triu(A),b))
+println("Basic exampple               : ",  LDLsolve(triu(A),b))
 
 A = sparse([1.0 1.0;1.0 -1.0]);
 b = cumsum(ones(c_float(A.n)));
-println("2x2                    : ", norm(A\b- LDLsolve(triu(A),b)))
+println("2x2                          : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = speye(100);
 b = ones(c_float(A.n));
-println("Big identity matrix    : ", norm(A\b- LDLsolve(triu(A),b)))
+println("Big identity matrix          : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = qdMatExample();
 b = randn(c_float,A.n);
-println("example QD             : ", norm(A\b- LDLsolve(triu(A),b)))
+println("example QD                   : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = speye(1)/5.0;
 b = randn(c_float,A.n);
-println("singleton              : ", norm(A\b- LDLsolve(triu(A),b)))
+println("singleton                    : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = sparse([1.0 1.0;1.0 (1.0-1e-8)]);
 b = randn(c_float,A.n);
-println("ill conditioned        : ", norm(A\b- LDLsolve(triu(A),b)))
+println("ill conditioned              : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = sparse([1.0 1.0;1.0 -(1.0 -1e-8)]);
 b = randn(c_float,A.n);
-println("ill conditioned QD     : ", norm(A\b- LDLsolve(triu(A),b)))
+println("ill conditioned QD           : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = sparse([1e-8 1.0;1.0 -(1.0 -1e-8)]);
 b = randn(c_float,A.n);
-println("+Epsilon at A[0,0]     : ", norm(A\b- LDLsolve(triu(A),b)))
+println("+Epsilon at A[0,0]           : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = qdRandom(100,90);
 b = randn(c_float,A.n);
-println("Big QD                 : ", norm(A\b- LDLsolve(triu(A),b)))
+println("Big QD                       : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = qdRandom(0,90);
 b = randn(c_float,A.n);
-println("Big ND                 : ", norm(A\b- LDLsolve(triu(A),b)))
+println("Big ND                       : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = qdRandom(100,0);
 b = randn(c_float,A.n);
-println("Big PD                 : ", norm(A\b- LDLsolve(triu(A),b)))
+println("Big PD                       : ", norm(A\b- LDLsolve(triu(A),b)))
 
 A = sparse([1.0 5.0; 5.0 1.0])
 b = randn(c_float,A.n);
-println("indefinite matrix      : ", norm(A\b- LDLsolve(triu(A),b)))
+println("indefinite matrix            : ", norm(A\b- LDLsolve(triu(A),b)))
+
+Ai = [0; 1; 2; 1; 0; 3; 4; 5; 5; 6; 4; 3] + 1
+Aj = [0; 1; 2; 2; 2; 3; 4; 5; 6; 6; 6; 6] + 1
+Ax = [-0.25; -0.25; 1; 0.513578; 0.529142; -0.25; -0.25; 1.10274; 0.15538; 1.25883; 0.13458; 0.621134]
+A = sparse(Ai, Aj, Ax)
+b = randn(c_float,A.n);
+println("tricky permuted osqp matrix  : ", norm(A\b- LDLsolve(triu(A),b)))
+
+
+
