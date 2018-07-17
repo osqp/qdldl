@@ -86,7 +86,7 @@ A basic example appears in [`examples/c/example.c`](./examples/c/example.c) and 
 You can include QDLDL in a cmake project `foo` by adding the subdirectory as
 ```
 # Add project
-add_subdirectory(qdldl EXCLUDE_FROM_ALL)
+add_subdirectory(qdldl)
 ```
 
 QDLDL can be linked using a static or dynamic linker

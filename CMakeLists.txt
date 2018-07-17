@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 3.2)
 
 # Project name
-project (qpldl)
+project (qdldl)
 
 # Set the output folder where your program will be created
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
@@ -51,6 +51,7 @@ set(
 
 # Static library
 add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
+
 
 
 # Declare include directories for the cmake exported target
