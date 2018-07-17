@@ -196,7 +196,7 @@ Aj = [0; 1; 2; 2; 2; 3; 4; 5; 6; 6; 6; 6] + 1
 Ax = [-0.25; -0.25; 1; 0.513578; 0.529142; -0.25; -0.25; 1.10274; 0.15538; 1.25883; 0.13458; 0.621134]
 A = sparse(Ai, Aj, Ax)
 b = randn(c_float,A.n);
-println("tricky permuted osqp matrix  : ", norm(A\b- LDLsolve(triu(A),b)))
+println("tricky permuted osqp matrix  : ", norm((A + A' - diagm(diag(A)))\b- LDLsolve(A, b)))
 
 
 
