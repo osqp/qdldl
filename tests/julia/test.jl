@@ -124,10 +124,6 @@ A = sparse([0.0 5.0; 5.0 1.0])
 b = randn(c_float,A.n);
 println("Zero at A[0,0]         : ",  LDLsolve(triu(A),b))
 
-A = sparse([1.0 5.0; 5.0 0.0])
-b = randn(c_float,A.n);
-println("Zero at A[end,end]     : ",  LDLsolve(triu(A),b))
-
 A = sparse([1.0 1.0; 1.0 1.0])
 b = randn(c_float,A.n);
 println("Rank deficient matrix  : ",  LDLsolve(triu(A),b))
@@ -146,6 +142,14 @@ println("-----------------------------")
 A = qdMatExample();
 b = randn(c_float,A.n);
 println("Basic example                : ",  norm(A\b-LDLsolve(triu(A),b)))
+
+A = sparse([4.0 1.0 2.0; 1.0 0.0 1.0;2.0 1.0 -3.0])
+b = [6.0,9.0,12.0];
+println("Zero mid matrix              : ",  norm(A\b-LDLsolve(triu(A),b)))
+
+A = sparse([1.0 5.0; 5.0 0.0])
+b = randn(c_float,A.n);
+println("Zero at A[end,end]           : ",  norm(A\b-LDLsolve(triu(A),b)))
 
 A = sparse([1.0 1.0;1.0 -1.0]);
 b = cumsum(ones(c_float(A.n)));
@@ -197,6 +201,3 @@ Ax = [-0.25; -0.25; 1; 0.513578; 0.529142; -0.25; -0.25; 1.10274; 0.15538; 1.258
 A = sparse(Ai, Aj, Ax)
 b = randn(c_float,A.n);
 println("tricky permuted osqp matrix  : ", norm((A + A' - diagm(diag(A)))\b- LDLsolve(A, b)))
-
-
-

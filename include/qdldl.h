@@ -10,7 +10,7 @@
 #ifndef QDLDL_TYPES_DEFINED
   #include <stdbool.h>
   #define QDLDL_TYPES_DEFINED
-  typedef long long      QDLDL_bool; //DEBUG
+  typedef bool      QDLDL_bool;
   typedef long long QDLDL_int;
   typedef double    QDLDL_float;
 # endif
@@ -36,6 +36,14 @@ extern "C" {
   * The data in (n,Ap,Ai) are from a square matrix A in CSC format, and
   * should include the upper triangular part of A only.
   *
+  * This function is only intended for factorisation of QD matrices specified
+  * by their upper triangular part.  An error is returned if any column has
+  * data below the diagonal or s completely empty.
+  *
+  * For matrices with a non-empty column but a zero on the corresponding diagonal,
+  * this function will *not* return an error, as it may still be possible to factor
+  * such a matrix in LDL form.   No promises are made in this case though...
+  *
   * @param   n     number of columns in CSC matrix A (assumed square)
   * @param  Ap     column pointers (size n+1) for columns of A
   * @param  Ai     row indices of A.  Has Ap[n] elements
@@ -43,8 +51,8 @@ extern "C" {
   * @param  Lnz    count of nonzeros in each column of L (size n) below diagonal
   * @param  etree  elimination tree (size n)
   * @return total  sum of Lnz (i.e. total nonzeros in L below diagonal). Returns
-  *                -1 if the input does not have triu structure or is missing entries
-  *                on the diagonal
+  *                -1 if the input does not have triu structure or has an empty
+  *                column.
   *
   *
 */
@@ -85,7 +93,8 @@ extern "C" {
   * @param  fwork  working array of floats. Length is n
   * @return        Returns a count of the number of positive elements
   *                in D.  Returns -1 and exits immediately if any element
-  *                of D evaluates exactly to zero (matrix is not quasidefinite)
+  *                of D evaluates exactly to zero (matrix is not quasidefinite
+  *                or otherwise LDL factorisable)
   *
 */
 
