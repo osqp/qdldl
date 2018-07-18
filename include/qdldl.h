@@ -10,7 +10,7 @@
 #ifndef QDLDL_TYPES_DEFINED
   #include <stdbool.h>
   #define QDLDL_TYPES_DEFINED
-  typedef bool      QDLDL_bool;
+  typedef long long      QDLDL_bool; //DEBUG
   typedef long long QDLDL_int;
   typedef double    QDLDL_float;
 # endif

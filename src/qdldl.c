@@ -4,6 +4,33 @@
 #define USED 1
 #define UNUSED 0
 
+
+//DEBUG
+#include <stdio.h>
+void qdprint_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName){
+
+  QDLDL_int i;
+  printf("%s = [",varName);
+  for(i=0; i< n; i++){
+    printf("%lli,",data[i]);
+  }
+  printf("]\n");
+
+}
+
+void qdprint_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName){
+
+  QDLDL_int i;
+  printf("%s = [",varName);
+  for(i=0; i< n; i++){
+    printf("%.3g,",data[i]);
+  }
+  printf("]\n");
+
+}
+// END DEBUG
+
+
 /* Compute the elimination tree for a quasidefinite matrix
    in compressed sparse column form.
 */
@@ -25,11 +52,9 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
     Lnz[i]   = 0;
     etree[i] = UNKNOWN;
 
-    //Abort if A is not triu or does not have
-    //antries at every diagonal term.  There should
-    //be at least one entry in every column, and the
-    //lst one in column should be the diagonal term
-    if(Ap[i] == Ap[i+1] || Ai[Ap[i+1]-1] != i ){
+    //Abort if A doesn't have at least one entry
+    //one entry in every column
+    if(Ap[i] == Ap[i+1]){
       return -1;
     }
 
@@ -39,6 +64,7 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
     work[j] = j;
     for(p = Ap[j]; p < Ap[j+1]; p++){
       i = Ai[p];
+      if(i > j){return -1;}; //abort if entries on lower triangle
       while(work[i] != j){
         if(etree[i] == UNKNOWN){
           etree[i] = j;
@@ -86,6 +112,10 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   yVals           = fwork;
 
 
+  qdprint_arrayi(Ap,n,"Ap");
+  qdprint_arrayi(Ai,Ap[n],"Ai");
+  qdprint_arrayf(Ax,Ap[n],"Ax");
+
 
   Lp[0] = 0; //first column starts at index zero
 
@@ -99,11 +129,12 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
     //to start is just the first space in the column
     yMarkers[i]  = UNUSED;
     yVals[i]     = 0.0;
+    D[i]         = 0.0;
     LNextSpaceInCol[i] = Lp[i];
   }
 
   // First element of the diagonal D.
-  D[0]      = Ax[0];
+  D[0]     = Ax[0];
   if(D[0] == 0.0){return -1;}
   if(D[0]  > 0.0){positiveValuesInD++;}
   Dinv[0] = 1/D[0];
@@ -112,21 +143,34 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   //in L b/c we are only computing the subdiagonal elements
   for(k = 1; k < n; k++){
 
-    //Initialize D[k] as the last element
-    //of this column of A (assumed triu)
-    D[k] = Ax[Ap[k+1]-1];
-
     //number of nonzeros in this row of L
     nnzY = 0;  //number of elements in this row
 
     //This loop determines where nonzeros
     //will go in the kth row of L, but doesn't
     //compute the actual values
-    tmpIdx = (Ap[k+1]-1);
+    printf("\n\nIn loop : k = %lli\n",k);
+    tmpIdx = Ap[k+1];
+
+    printf("loop range : [%lli,%lli)\n",Ap[k],tmpIdx);
+
     for(i = Ap[k]; i < tmpIdx; i++){
+
+      printf("Inner loop : i = %lli\n",i);
+
+      //Initialize D[k] as the element of this column
+      //corresponding to the diagonal place
+      if(Ai[i] == k){
+        D[k] = Ax[i];
+        printf("Continuing loop : D[k] = %f\n",Ax[i]);
+        if(D[k] == 0.0){return -1;}
+        continue;
+      }
 
       bidx        = Ai[i];   // we are working on this element of b
       yVals[bidx] = Ax[i];   // initialise y(bidx) = b(bidx)
+      printf("i = %lli : bidx = %lli : ",i,bidx);
+      qdprint_arrayf(yVals,n,"yVals");
 
       // use the forward elimination tree to figure
       // out which elements must be eliminated after
@@ -159,6 +203,13 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
       } //end if
 
     } //end for i
+
+    //DEBUG
+    printf("k = %lli : ",k);
+    qdprint_arrayf(D,n,"D");
+    qdprint_arrayf(yVals,n,"yVals");
+    qdprint_arrayi(yMarkers,n,"yMarkers");
+    //END DEBUG
 
     //This for loop places nonzeros values in the k^th row
     for(i = (nnzY-1); i >=0; i--){
@@ -194,7 +245,11 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
     //Maintain a count of the positive entries
     //in D.  If we hit a zero, we can't factor
     //this matrix, so abort
-    if(D[k] == 0.0){return -1;}
+    if(D[k] == 0.0){
+      printf("Abort case: k = %lli : ",k);
+      qdprint_arrayf(D,n,"D");
+      return -1;
+    }
     if(D[k]  > 0.0){positiveValuesInD++;}
 
     //compute the inverse of the diagonal

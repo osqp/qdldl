@@ -14,7 +14,7 @@ static char* test_zero_on_diag()
   //NB : this system is solvable, but not by LDL
   int status = ldl_factor_solve(An,Ap,Ai,Ax,b);
 
-  mu_assert("Factorisation failed", status < 0);
+  mu_assert("Zero diag Factorisation failed", status < 0);
 
   return 0;
 }
