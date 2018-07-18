@@ -51,8 +51,8 @@ set(
 
 # Static library
 add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
-
-
+# Give same name to static library output
+set_target_properties(qdldlstatic PROPERTIES OUTPUT_NAME qdldl)
 
 # Declare include directories for the cmake exported target
 target_include_directories(qdldlstatic

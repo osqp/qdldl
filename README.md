@@ -27,8 +27,7 @@ make
 This will generate an `out/` folder with contents:
 
 - `qdldl_example`: a **code example** from [`examples/c/example.c`](./examples/c/example.c)
-- `libqdldlstatic`: a static library
-- `libqdldl`: a dynamic library
+- `libqdldl`: a static and a dynamic versions of the library.
 
 **N.B.** All files will have file extensions appropriate to your operating system.
 
