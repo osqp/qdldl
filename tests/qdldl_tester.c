@@ -29,14 +29,14 @@ int tests_run = 0;
 
 
 static char* all_tests() {
-  mu_run_test(test_basic);
-  mu_run_test(test_identity);
-  mu_run_test(test_rank_deficient);
-  mu_run_test(test_singleton);
-  mu_run_test(test_sym_structure);
-  mu_run_test(test_tril_structure);
-  mu_run_test(test_two_by_two);
-  mu_run_test(test_zero_on_diag);
+  // mu_run_test(test_basic);
+  // mu_run_test(test_identity);
+  // mu_run_test(test_rank_deficient);
+  // mu_run_test(test_singleton);
+  // mu_run_test(test_sym_structure);
+  // mu_run_test(test_tril_structure);
+  // mu_run_test(test_two_by_two);
+  // mu_run_test(test_zero_on_diag);
   mu_run_test(test_osqp_kkt);
 
   return 0;
@@ -111,6 +111,12 @@ int ldl_factor_solve(QDLDL_int An,
   bwork = (QDLDL_bool*)malloc(sizeof(QDLDL_bool)*An);
   fwork = (QDLDL_float*)malloc(sizeof(QDLDL_float)*An);
 
+  // DEBUG arguments
+  printf("Arguments for etree\n");
+  printf("An = %lli\n", An);
+  qdprint_arrayi(Ap, An + 1, "Ap");
+  qdprint_arrayi(Ai, Ap[An], "Ai");
+
   /*--------------------------------
    * elimination tree calculation
    *---------------------------------*/
@@ -131,6 +137,16 @@ int ldl_factor_solve(QDLDL_int An,
   Li    = (QDLDL_int*)malloc(sizeof(QDLDL_int)*sumLnz);
   Lx    = (QDLDL_float*)malloc(sizeof(QDLDL_float)*sumLnz);
 
+
+  // DEBUG arguments
+  printf("Arguments for factor\n");
+  qdprint_arrayi(Ap, An + 1, "Ap");
+  qdprint_arrayi(Ai, Ap[An], "Ai");
+  qdprint_arrayf(Ax, Ap[An], "Ax");
+  qdprint_arrayi(Lnz, An, "Lnz");
+  qdprint_arrayi(etree, An, "etree");
+
+
   //now factor
   factorStatus = QDLDL_factor(An,Ap,Ai,Ax,Lp,Li,Lx,D,Dinv,Lnz,etree,bwork,iwork,fwork);
 
@@ -141,10 +157,16 @@ int ldl_factor_solve(QDLDL_int An,
     return factorStatus;
   }
 
+  // DEBUG (print L factorization)
+  qdprint_arrayi(Lp, An + 1, "Lp");
+  qdprint_arrayi(Li, Lp[Ln], "Li");
+  qdprint_arrayf(Lx, Lp[Ln], "Lx");
+
   /*--------------------------------
    * solve
    *---------------------------------*/
   QDLDL_solve(Ln,Lp,Li,Lx,Dinv,b);
+
 
   /*--------------------------------
    * clean up
