@@ -112,6 +112,12 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   //in L b/c we are only computing the subdiagonal elements
   for(k = 1; k < n; k++){
 
+    //NB : For each k, we compute a solution to
+    //y = L(0:(k-1),0:k-1))\b, where b is the kth
+    //column of A that sits above the diagonal.
+    //The solution y is then the kth row of L,
+    //with an implied '1' at the diagonal entry.
+
     //number of nonzeros in this row of L
     nnzY = 0;  //number of elements in this row
 
@@ -122,7 +128,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
 
     for(i = Ap[k]; i < tmpIdx; i++){
 
-      bidx        = Ai[i];   // we are working on this element of b
+      bidx = Ai[i];   // we are working on this element of b
 
       //Initialize D[k] as the element of this column
       //corresponding to the diagonal place.  Don't use
