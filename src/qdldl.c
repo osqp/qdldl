@@ -1,8 +1,8 @@
 #include "qdldl.h"
 
-#define UNKNOWN -1
-#define USED 1
-#define UNUSED 0
+#define QDLDL_UNKNOWN (-1)
+#define QDLDL_USED (1)
+#define QDLDL_UNUSED (0)
 
 //DEBUG
 #include <stdio.h>
@@ -48,7 +48,7 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
   // zero out Lnz and work.  Set all etree values to unknown
     work[i]  = 0;
     Lnz[i]   = 0;
-    etree[i] = UNKNOWN;
+    etree[i] = QDLDL_UNKNOWN;
 
     //Abort if A doesn't have at least one entry
     //one entry in every column
@@ -64,7 +64,7 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
       i = Ai[p];
       if(i > j){return -1;}; //abort if entries on lower triangle
       while(work[i] != j){
-        if(etree[i] == UNKNOWN){
+        if(etree[i] == QDLDL_UNKNOWN){
           etree[i] = j;
         }
         Lnz[i]++;         //nonzeros in this column
@@ -120,7 +120,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
     // set all Yidx to be 'unused' initially
     //in each column of L, the next available space
     //to start is just the first space in the column
-    yMarkers[i]  = UNUSED;
+    yMarkers[i]  = QDLDL_UNUSED;
     yVals[i]     = 0.0;
     D[i]         = 0.0;
     LNextSpaceInCol[i] = Lp[i];
@@ -170,18 +170,18 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
       // this element of b
       nextIdx = bidx;
 
-      if(yMarkers[nextIdx] == UNUSED){   //this y term not already visited
+      if(yMarkers[nextIdx] == QDLDL_UNUSED){   //this y term not already visited
 
-        yMarkers[nextIdx] = USED;     //I touched this one
+        yMarkers[nextIdx] = QDLDL_USED;     //I touched this one
         elimBuffer[0]     = nextIdx;  // It goes at the start of the current list
         nnzE              = 1;         //length of unvisited elimination path from here
 
         nextIdx = etree[bidx];
 
-        while(nextIdx != UNKNOWN && nextIdx < k){
-          if(yMarkers[nextIdx] == USED) break;
+        while(nextIdx != QDLDL_UNKNOWN && nextIdx < k){
+          if(yMarkers[nextIdx] == QDLDL_USED) break;
 
-          yMarkers[nextIdx] = USED;   //I touched this one
+          yMarkers[nextIdx] = QDLDL_USED;   //I touched this one
           elimBuffer[nnzE] = nextIdx; //It goes in the current list
           nnzE++;                     //the list is one longer than before
           nextIdx = etree[nextIdx];   //one step further along tree
@@ -221,10 +221,10 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
       D[k] -= yVals_cidx*Lx[tmpIdx];
       LNextSpaceInCol[cidx]++;
 
-      //reset the yvalues and indices back to zero and UNUSED
+      //reset the yvalues and indices back to zero and QDLDL_UNUSED
       //once I'm done with them
       yVals[cidx]     = 0.0;
-      yMarkers[cidx]  = UNUSED;
+      yMarkers[cidx]  = QDLDL_UNUSED;
 
     } //end for i
 
