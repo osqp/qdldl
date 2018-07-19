@@ -93,6 +93,16 @@ target_link_libraries (foo qdldl)
 ```
 for dynamic linking the shared library should be available in your path.
 
+There is also the option to include QDLDL as an object library in your project.
+The current `CMakeLists.txt` file creates an object library called `qdldlobject`.
+This can be added to your project by adding it after your sources.
+For example, when creating a library `foo` you can add
+
+```
+add_library(foo foo.c foo.h $<TARGET_OBJECTS:qdldlobject>)
+```
+for more details see the [cmake documentation](https://cmake.org/cmake/help/latest/command/add_library.html#object-libraries).
+
 
 ## The algorithm
 
