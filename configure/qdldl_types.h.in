@@ -21,4 +21,4 @@ typedef int   QDLDL_bool;
 }
 # endif /* ifdef __cplusplus */
 
-#endif /* ifndef OSQP_CONFIGURE_H */
+#endif /* ifndef QDLDL_TYPES_H */
