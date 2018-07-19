@@ -14,7 +14,7 @@ typedef @QDLDL_FLOAT_TYPE@  QDLDL_float; /* for numerical values  */
 #if __STDC_VERSION__ >= 199901L
 typedef _Bool QDLDL_bool;
 #else
-#define int   QDLDL_bool;
+typedef int   QDLDL_bool;
 #endif
 
 # ifdef __cplusplus
