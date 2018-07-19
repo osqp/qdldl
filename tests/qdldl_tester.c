@@ -13,10 +13,6 @@ QDLDL_float vec_diff_norm(QDLDL_float* x, QDLDL_float* y, QDLDL_int len);
 int ldl_factor_solve(QDLDL_int An, QDLDL_int* Ap,QDLDL_int* Ai,
                      QDLDL_float* Ax,QDLDL_float* b);
 
-//utility functions for debug
-void qdprint_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName);
-void qdprint_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName);
-
 // Include tests
 #include "test_basic.h"
 #include "test_identity.h"

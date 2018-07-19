@@ -4,30 +4,30 @@
 #define QDLDL_USED (1)
 #define QDLDL_UNUSED (0)
 
-//DEBUG
-#include <stdio.h>
-void qdprint_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName){
+// //DEBUG
+// #include <stdio.h>
+// void qdprint_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName){
 
-  QDLDL_int i;
-  printf("%s = [",varName);
-  for(i=0; i< n; i++){
-    printf("%lli,",data[i]);
-  }
-  printf("]\n");
+//   QDLDL_int i;
+//   printf("%s = [",varName);
+//   for(i=0; i< n; i++){
+//     printf("%lli,",data[i]);
+//   }
+//   printf("]\n");
 
-}
+// }
 
-void qdprint_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName){
+// void qdprint_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName){
 
-  QDLDL_int i;
-  printf("%s = [",varName);
-  for(i=0; i< n; i++){
-    printf("%.3g,",data[i]);
-  }
-  printf("]\n");
+//   QDLDL_int i;
+//   printf("%s = [",varName);
+//   for(i=0; i< n; i++){
+//     printf("%.3g,",data[i]);
+//   }
+//   printf("]\n");
 
-}
-// END DEBUG
+// }
+// // END DEBUG
 
 /* Compute the elimination tree for a quasidefinite matrix
    in compressed sparse column form.
