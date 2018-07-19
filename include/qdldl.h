@@ -1,32 +1,8 @@
 #ifndef QDLDL_H
-# define QDLDL_H
+#define QDLDL_H
 
-// Include qdldl configure options
-#include "qdldl_configure.h"
-
-// Custom types
-// Integers
-# ifdef DLONG            // long integers
-typedef long long QDLDL_int; /* for indices */
-# else // standard integers
-typedef int QDLDL_int;       /* for indices */
-# endif /* ifdef DLONG */
-
-// Doubles
-# ifndef DFLOAT         // Doubles
-typedef double QDLDL_float; /* for numerical values  */
-# else                  // Floats
-typedef float QDLDL_float;  /* for numerical values  */
-# endif /* ifndef DFLOAT */
-
-// Define bool if standard > C89
-#if __STDC_VERSION__ >= 199901L
-#include <stdbool.h>
-typedef bool      QDLDL_bool;
-#else
-typedef QDLDL_int   QDLDL_bool;
-#endif
-
+// Include qdldl type options
+#include "qdldl_types.h"
 
 # ifdef __cplusplus
 extern "C" {
