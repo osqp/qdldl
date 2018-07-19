@@ -39,19 +39,6 @@ To install (uninstall) the libraries and headers you can simply run `make instal
 
 ## Calling QDLDL
 
-### Including the header
-QDLDL uses its own default internal types for integers, floats and booleans. If you want to override these types with your own you must first define them explicitly before including the library
-```c
-typedef mybool QDLDL_bool;
-typedef myint QDLDL_int;
-typedef myfloat QDLDL_float;
-
-/* Then define this symbol to prevent type redefinitions */
-#define QDLDL_TYPES_DEFINED
-
-#include "qdldl.h"
-```
-
 ### Main API
 
 The QDLDL API consists of 5 functions documented in [`include/qdldl.h`](./include/qdldl.h).
@@ -72,6 +59,14 @@ In the above function calls the matrices `A` and `L` are stored in compressed sp
 The matrices `D` and `Dinv` are both diagonal matrices, with the diagonal values stored in an array.
 
 The matrix input `A` should be quasidefinite.   The API provides some (non-comprehensive) error checking to protect against non-quasidefinite or non-upper triangular inputs.
+
+### Custom types for integer, floats and booleans
+QDLDL uses its own internal types for integers, floats and booleans (`QDLDL_int, QDLDL_float, QDLDL_bool`. They can be specified using the cmake options:
+
+- `DFLOAT` (default false): uses float numbers instead of doubles
+- `DLONG` (default true): uses long integers for indexing (for large matrices)
+
+Note that the `QDLDL_bool` type is defined as the standard `bool` type for C standards >= C99. Before the `bool` type was not defined and for earlier standards QDLDL sets `QDLDL_bool = QDLDL_int`.
 
 
 ## Linking QDLDL

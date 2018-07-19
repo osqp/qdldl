@@ -1,0 +1,18 @@
+#ifndef OSQP_CONFIGURE_H
+# define OSQP_CONFIGURE_H
+
+# ifdef __cplusplus
+extern "C" {
+# endif /* ifdef __cplusplus */
+
+/* DFLOAT */
+#cmakedefine DFLOAT
+
+/* DLONG */
+#cmakedefine DLONG
+
+# ifdef __cplusplus
+}
+# endif /* ifdef __cplusplus */
+
+#endif /* ifndef OSQP_CONFIGURE_H */

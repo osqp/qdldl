@@ -1,19 +1,31 @@
 #ifndef QDLDL_H
 # define QDLDL_H
 
-//Define external bool, int and float types if they
-//are not already defined externally.  If you wish
-//to have your own types defined here, then define
-//QDLDL_TYPES_DEFINED elsewhere and manually define
-//the types QDLDL_bool, QDLDL_int and QDLDL_float
+// Include qdldl configure options
+#include "qdldl_configure.h"
 
-#ifndef QDLDL_TYPES_DEFINED
-  #include <stdbool.h>
-  #define QDLDL_TYPES_DEFINED
-  typedef bool      QDLDL_bool;
-  typedef long long QDLDL_int;
-  typedef double    QDLDL_float;
-# endif
+// Custom types
+// Integers
+# ifdef DLONG            // long integers
+typedef long long QDLDL_int; /* for indices */
+# else // standard integers
+typedef int QDLDL_int;       /* for indices */
+# endif /* ifdef DLONG */
+
+// Doubles
+# ifndef DFLOAT         // Doubles
+typedef double QDLDL_float; /* for numerical values  */
+# else                  // Floats
+typedef float QDLDL_float;  /* for numerical values  */
+# endif /* ifndef DFLOAT */
+
+// Define bool if standard > C89
+#if __STDC_VERSION__ >= 199901L
+#include <stdbool.h>
+typedef bool      QDLDL_bool;
+#else
+typedef QDLDL_int   QDLDL_bool;
+#endif
 
 
 # ifdef __cplusplus

@@ -14,6 +14,21 @@ LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/configure/cmake)
 # Export compilation commands for IDEs and autocompletion
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Options
+# ----------------------------------------------
+# Use floats instead of doubles
+option (DFLOAT "Use float numbers instead of doubles" OFF)
+message(STATUS "Floats are ${DFLOAT}")
+
+# Use long integers for indexing
+option (DLONG "Use long integers (64bit) for indexing" ON)
+if (NOT (CMAKE_SIZEOF_VOID_P EQUAL 8))
+	message(STATUS "Disabling long integers (64bit) on 32bit machine")
+	set(DLONG OFF)
+endif()
+message(STATUS "Long integers (64bit) are ${DLONG}")
+
+
 # Set Compiler flags
 # ----------------------------------------------
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)  # -fPIC
@@ -32,6 +47,13 @@ if (NOT MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g")
 endif (NOT MSVC)
+
+# Generate header file with the global options
+# ---------------------------------------------
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_configure.h.in
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_configure.h
+               NEWLINE_STYLE LF)
+
 
 # Set sources
 # ----------------------------------------------
