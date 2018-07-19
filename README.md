@@ -66,7 +66,7 @@ QDLDL uses its own internal types for integers, floats and booleans (`QDLDL_int,
 - `DFLOAT` (default false): uses float numbers instead of doubles
 - `DLONG` (default true): uses long integers for indexing (for large matrices)
 
-Note that the `QDLDL_bool` type is defined as the standard `bool` type for C standards >= C99. Before the `bool` type was not defined and for earlier standards QDLDL sets `QDLDL_bool = QDLDL_int`.
+Note that the `QDLDL_bool` type is defined as the standard `_Bool` type for C standards >= C99.  In earlier C standards the `_Bool` type was not defined and QDLDL sets `QDLDL_bool = QDLDL_int`.
 
 
 ## Linking QDLDL
