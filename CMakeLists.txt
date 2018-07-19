@@ -17,11 +17,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Options
 # ----------------------------------------------
 # Use floats instead of doubles
-option (DFLOAT "Use float numbers instead of doubles" OFF)
+set(DFLOAT OFF CACHE BOOL "Use float numbers instead of doubles")
 message(STATUS "Floats are ${DFLOAT}")
 
 # Use long integers for indexing
-option (DLONG "Use long integers (64bit) for indexing" ON)
+set(DLONG ON CACHE BOOL "Use long integers (64bit) for indexing")
 if (NOT (CMAKE_SIZEOF_VOID_P EQUAL 8))
 	message(STATUS "Disabling long integers (64bit) on 32bit machine")
 	set(DLONG OFF)
@@ -50,8 +50,22 @@ endif (NOT MSVC)
 
 # Generate header file with the global options
 # ---------------------------------------------
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_configure.h.in
-               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_configure.h
+
+# numeric types
+if(DFLOAT)
+  set(QDLDL_FLOAT_TYPE "float")
+else()
+	set(QDLDL_FLOAT_TYPE "double")
+endif()
+
+if(DLONG)
+  set(QDLDL_INT_TYPE "long long")
+else()
+	set(QDLDL_INT_TYPE "int")
+endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_types.h.in
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_types.h
                NEWLINE_STYLE LF)
 
 
@@ -65,6 +79,7 @@ set(
 set(
 	qdldl_headers
 	include/qdldl.h
+	include/qdldl_types.h
 	)
 
 
