@@ -4,8 +4,6 @@ export qdldl, \, solve, solve!
 
 using AMD
 
-import Base: \
-
 const QDLDL_UNKNOWN = -1;
 const QDLDL_USED   = true;
 const QDLDL_UNUSED = false;
