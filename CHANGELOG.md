@@ -1,3 +1,8 @@
+Version 0.1.2 (23 July 2018)
+-----------------------------
+*   Various cmake improvements.
+*   Added pure Julia implementation.
+
 Version 0.1.1 (19 July 2018)
 -----------------------------
 *   Fixed behaviour when data in A does not appear
