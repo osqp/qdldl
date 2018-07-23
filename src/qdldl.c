@@ -74,8 +74,9 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
     }
   }
 
-  //tally the total nonzeros
-  for(i=0; i < n; i++){sumLnz += Lnz[i];}
+  //compute the total nonzeros in L.  This much
+  //space is required to store Li and Lx
+  for(i = 0; i < n; i++){sumLnz += Lnz[i];}
 
   return sumLnz;
 }
