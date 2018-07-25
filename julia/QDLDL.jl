@@ -304,7 +304,7 @@ function QDLDL_factor!(n,Ap,Ai,Ax,Lp,Li,Lx,D,Dinv,Lnz,etree,bwork,iwork,fwork,lo
             # column of L and subtract to solve to y
             tmpIdx = LNextSpaceInCol[cidx];
 
-            #don't compute Lx for logical factorisation only
+            #don't compute Lx for logical factorisation 
             #this is not implemented in the C version
             if(!logicalFactor)
                 yVals_cidx = yVals[cidx]
