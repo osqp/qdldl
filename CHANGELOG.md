@@ -1,3 +1,8 @@
+Unreleased
+-----------------------------
+*   Julia implementation supports logical factorisation.
+
+
 Version 0.1.2 (23 July 2018)
 -----------------------------
 *   Various cmake improvements.
