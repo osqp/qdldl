@@ -6,9 +6,8 @@ static char* test_rank_deficient()
   QDLDL_float Ax[] = {1.0, 1.0, 1.0};
   QDLDL_int An = 2;
 
-  // RHS and solution to Ax = b (should be impossible)
+  // RHS for Ax = b (should fail to solve)
   QDLDL_float b[]    = {1,1};
-  QDLDL_float xsol[] = {1,1};
 
   //x replaces b during solve
   int status = ldl_factor_solve(An,Ap,Ai,Ax,b);
