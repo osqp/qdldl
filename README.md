@@ -29,6 +29,8 @@ This will generate an `out/` folder with contents:
 - `qdldl_example`: a **code example** from [`examples/c/example.c`](./examples/c/example.c)
 - `libqdldl`: a static and a dynamic versions of the library.
 
+You can include an addition option `-DUNITTESTS=ON` when calling `cmake`, which will result in an additional executable `qdldl_tester` being built in the `out/` folder to test QDLDL on a variety of problems, including those with rank deficient or otherwise ill-formatted inputs.
+
 **N.B.** All files will have file extensions appropriate to your operating system.
 
 
