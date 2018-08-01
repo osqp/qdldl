@@ -1,7 +1,7 @@
 #These types must be the same as in the QDLDL header
 c_int   = Int64;
 c_float = Float64;
-c_bool  = Bool;
+c_bool  = Uint8;
 
 function LDLsolve(A::SparseMatrixCSC{c_float,c_int},b::Array{c_float})
 
