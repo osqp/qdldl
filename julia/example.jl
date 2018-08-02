@@ -1,5 +1,5 @@
 push!(LOAD_PATH, pwd())
-importall QDLDL
+using QDLDL
 
 c_float = Float64
 c_int   = Int64
@@ -25,5 +25,16 @@ x = copy(b)
 solve!(F,x)
 println("Example (in place with solve!())   : ",  norm(x - A\b))
 
-F = qdldl(A,collect(A.n:-1:1))
+F = qdldl(A,perm=collect(A.n:-1:1))
 println("Example (User permutation)         : ",  norm(F\b - A\b))
+
+F = qdldl(A,perm=nothing)
+println("Example (No permutation)           : ",  norm(F\b - A\b))
+
+
+#compute a logical factorisation only
+Flog = qdldl(A,logical = true)
+Fnum = qdldl(A,logical = true)
+
+logicalCheck = all((full(Fnum.L) .!= 0) .== (full(Flog.L) .!= 0))
+println("Logical factorisation works?: ", logicalCheck)
