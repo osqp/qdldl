@@ -2,7 +2,8 @@ module QDLDL
 
 export qdldl, \, solve, solve!
 
-using AMD
+# using AMD
+using SparseArrays, LinearAlgebra
 
 const QDLDL_UNKNOWN = -1;
 const QDLDL_USED   = true;
@@ -48,11 +49,10 @@ end
 #
 # qdldl(A,logical=true) produces a logical factorisation only
 
-function qdldl{Tv<:AbstractFloat,Ti<:Integer}(
-            A::SparseMatrixCSC{Tv,Ti};
-            perm::Union{Array{Ti,1},Void}=amd(A),
+function qdldl(A::SparseMatrixCSC{Tv,Ti};
+            perm::Union{Array{Ti,1},Nothing}=nothing,
             logical::Bool=false
-         )
+         ) where {Tv<:AbstractFloat,Ti<:Integer}
     Atr = perm == nothing ? triu(A) : triu(A[perm,perm])
     (L, Dinv) = factor(Atr,logical)
     return QDLDLFactorisation(L,Dinv,perm,logical)
@@ -97,15 +97,15 @@ function solve!(QDLDL::QDLDLFactorisation,b)
 end
 
 
-function factor{Tv<:AbstractFloat,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti},logical)
+function factor(A::SparseMatrixCSC{Tv,Ti},logical) where {Tv<:AbstractFloat,Ti<:Integer}
 
     A = triu(A)
 
-    etree  = Array{Ti}(A.n)
-    Lnz    = Array{Ti}(A.n)
-    iwork  = Array{Ti}(A.n*3)
-    bwork  = Array{Bool}(A.n)
-    fwork  = Array{Tv}(A.n)
+    etree  = Array{Ti}(undef,A.n)
+    Lnz    = Array{Ti}(undef,A.n)
+    iwork  = Array{Ti}(undef,A.n*3)
+    bwork  = Array{Bool}(undef,A.n)
+    fwork  = Array{Tv}(undef,A.n)
 
     #compute elimination gree using QDLDL converted code
     sumLnz = QDLDL_etree!(A.n,A.colptr,A.rowval,iwork,Lnz,etree)
@@ -115,12 +115,12 @@ function factor{Tv<:AbstractFloat,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti},logical
     end
 
     #allocate space for the L matrix row indices and data
-    Lp = Array{Ti}(A.n + 1)
-    Li = Array{Ti}(sumLnz)
-    Lx = Array{Tv}(sumLnz)
+    Lp = Array{Ti}(undef,A.n + 1)
+    Li = Array{Ti}(undef,sumLnz)
+    Lx = Array{Tv}(undef,sumLnz)
     #allocate for D and D inverse
-    D  = Array{Tv}(A.n)
-    Dinv = Array{Tv}(A.n)
+    D  = Array{Tv}(undef,A.n)
+    Dinv = Array{Tv}(undef,A.n)
 
     if(logical)
         Lx[:]   = 1
@@ -304,7 +304,7 @@ function QDLDL_factor!(n,Ap,Ai,Ax,Lp,Li,Lx,D,Dinv,Lnz,etree,bwork,iwork,fwork,lo
             # column of L and subtract to solve to y
             tmpIdx = LNextSpaceInCol[cidx];
 
-            #don't compute Lx for logical factorisation 
+            #don't compute Lx for logical factorisation
             #this is not implemented in the C version
             if(!logicalFactor)
                 yVals_cidx = yVals[cidx]
