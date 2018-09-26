@@ -1,7 +1,7 @@
 #These types must be the same as in the QDLDL header
 c_int   = Int64;
 c_float = Float64;
-c_bool  = Uint8;
+c_bool  = UInt8;
 
 function LDLsolve(A::SparseMatrixCSC{c_float,c_int},b::Array{c_float})
 
@@ -201,3 +201,5 @@ Ax = [-0.25; -0.25; 1; 0.513578; 0.529142; -0.25; -0.25; 1.10274; 0.15538; 1.258
 A = sparse(Ai, Aj, Ax)
 b = randn(c_float,A.n);
 println("tricky permuted osqp matrix  : ", norm((A + A' - diagm(diag(A)))\b- LDLsolve(A, b)))
+
+@benchmark A\b

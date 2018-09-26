@@ -1,5 +1,6 @@
 push!(LOAD_PATH, pwd())
-using QDLDL
+using QDLDL, SparseArrays, LinearAlgebra
+using Profile
 
 c_float = Float64
 c_int   = Int64
@@ -34,7 +35,7 @@ println("Example (No permutation)           : ",  norm(F\b - A\b))
 
 #compute a logical factorisation only
 Flog = qdldl(A,logical = true)
-Fnum = qdldl(A,logical = true)
+Fnum = qdldl(A,logical = false)
 
-logicalCheck = all((full(Fnum.L) .!= 0) .== (full(Flog.L) .!= 0))
+logicalCheck = all((Array(Fnum.L) .!= 0) .== (Array(Flog.L) .!= 0))
 println("Logical factorisation works?: ", logicalCheck)
