@@ -1,6 +1,5 @@
 # Unit test for QDLDL.jl
-
-using .QDLDL, Test, Random, LinearAlgebra, SparseArrays
+using QDLDL, Test, Random, Statistics, LinearAlgebra, SparseArrays
 
 rng = Random.MersenneTwister(131123)
 
@@ -18,6 +17,7 @@ density = rand(rng, 0.1:0.1:0.4)
 A = generateSparsePosDefMatrix(rng, dim, density)
 xtrue = rand(rng, dim)
 btrue = A * xtrue
+
 
 
 F = QDLDL.qdldl(A)
