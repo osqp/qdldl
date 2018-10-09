@@ -2,7 +2,9 @@ module QDLDL
 
 export qdldl, \, solve, solve!
 
-using AMD
+using AMD, SparseArrays
+using LinearAlgebra: triu
+
 
 const QDLDL_UNKNOWN = -1;
 const QDLDL_USED   = true;
@@ -12,34 +14,14 @@ struct QDLDLFactorisation{Tf<:AbstractFloat,Ti<:Integer}
 
     #contains factors L, D^{-1}
     L::SparseMatrixCSC{Tf,Ti}
-    Dinv::Array{Tf}
+    Dinv::Array{Tf,1}
     #permutation vector (nothing if no permutation)
     p
+    #work vector (nothing if no permutation)
+    work
     #is it logical factorisation only?
     logical::Bool
 end
-
-#=
-#constructor for enforcing no permutation
-function qdldl{Tv<:AbstractFloat,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti},p::Void)
-    #no permutation at all
-    (L, Dinv) = factor(triu(A));
-    return QDLDLFactorisation(L,Dinv,nothing)
-end
-
-#constructor for user-specified permutation, including no permutation
-function qdldl{Tv<:AbstractFloat,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti},p::Array{Ti})
-    (L, Dinv) = factor(triu(A[p,p]));
-    return QDLDLFactorisation(L,Dinv,p)
-end
-
-#constructor for the default (AMD) permutation
-function qdldl{Tv<:AbstractFloat,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
-    #use AMD ordering as a default
-    p = amd(A)::Array{Ti};
-    return qdldl(A,p);
-end
-=#
 
 # Usage :
 # qdldl(A) uses the default AMD ordering
@@ -48,14 +30,19 @@ end
 #
 # qdldl(A,logical=true) produces a logical factorisation only
 
-function qdldl{Tv<:AbstractFloat,Ti<:Integer}(
-            A::SparseMatrixCSC{Tv,Ti};
-            perm::Union{Array{Ti,1},Void}=amd(A),
-            logical::Bool=false
-         )
+function qdldl(A::SparseMatrixCSC{Tv,Ti};
+               perm::Union{Array{Ti,1},Nothing}=amd(A),
+               logical::Bool=false
+              ) where {Tv<:AbstractFloat,Ti<:Integer}
+
     Atr = perm == nothing ? triu(A) : triu(A[perm,perm])
     (L, Dinv) = factor(Atr,logical)
-    return QDLDLFactorisation(L,Dinv,perm,logical)
+
+    #allocate memory for permutation handling if needed
+    work = perm == nothing ? nothing : Array{Tv}(undef,length(perm))
+
+    return QDLDLFactorisation(L,Dinv,perm,work,logical)
+
 end
 
 
@@ -81,31 +68,29 @@ function solve!(QDLDL::QDLDLFactorisation,b)
     end
 
     #permute b
-    if QDLDL.p != nothing
-        permute!(b,QDLDL.p)
-    end
+    tmp = QDLDL.p == nothing ? b : permute!(QDLDL.work,b,QDLDL.p)
+
     QDLDL_solve!(QDLDL.L.n,
     QDLDL.L.colptr,
     QDLDL.L.rowval,
     QDLDL.L.nzval,
-    QDLDL.Dinv,b)
+    QDLDL.Dinv,
+    tmp)
+
     #inverse permutation
-    if QDLDL.p != nothing
-        ipermute!(b,QDLDL.p)
-    end
+    b = QDLDL.p == nothing ? tmp : ipermute!(b,QDLDL.work,QDLDL.p)
+
     return nothing
 end
 
 
-function factor{Tv<:AbstractFloat,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti},logical)
+function factor(A::SparseMatrixCSC{Tv,Ti},logical) where {Tv<:AbstractFloat,Ti<:Integer}
 
-    A = triu(A)
-
-    etree  = Array{Ti}(A.n)
-    Lnz    = Array{Ti}(A.n)
-    iwork  = Array{Ti}(A.n*3)
-    bwork  = Array{Bool}(A.n)
-    fwork  = Array{Tv}(A.n)
+    etree  = Array{Ti}(undef,A.n)
+    Lnz    = Array{Ti}(undef,A.n)
+    iwork  = Array{Ti}(undef,A.n*3)
+    bwork  = Array{Bool}(undef,A.n)
+    fwork  = Array{Tv}(undef,A.n)
 
     #compute elimination gree using QDLDL converted code
     sumLnz = QDLDL_etree!(A.n,A.colptr,A.rowval,iwork,Lnz,etree)
@@ -115,17 +100,17 @@ function factor{Tv<:AbstractFloat,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti},logical
     end
 
     #allocate space for the L matrix row indices and data
-    Lp = Array{Ti}(A.n + 1)
-    Li = Array{Ti}(sumLnz)
-    Lx = Array{Tv}(sumLnz)
+    Lp = Array{Ti}(undef,A.n + 1)
+    Li = Array{Ti}(undef,sumLnz)
+    Lx = Array{Tv}(undef,sumLnz)
     #allocate for D and D inverse
-    D  = Array{Tv}(A.n)
-    Dinv = Array{Tv}(A.n)
+    D  = Array{Tv}(undef,A.n)
+    Dinv = Array{Tv}(undef,A.n)
 
     if(logical)
-        Lx[:]   = 1
-        D[:]    = 1
-        Dinv[:] = 1
+        Lx   .= 1
+        D    .= 1
+        Dinv .= 1
     end
 
     #factor using QDLDL converted code
@@ -304,7 +289,7 @@ function QDLDL_factor!(n,Ap,Ai,Ax,Lp,Li,Lx,D,Dinv,Lnz,etree,bwork,iwork,fwork,lo
             # column of L and subtract to solve to y
             tmpIdx = LNextSpaceInCol[cidx];
 
-            #don't compute Lx for logical factorisation 
+            #don't compute Lx for logical factorisation
             #this is not implemented in the C version
             if(!logicalFactor)
                 yVals_cidx = yVals[cidx]
@@ -381,6 +366,23 @@ function QDLDL_solve!(n,Lp,Li,Lx,Dinv,b)
 
 end
 
+
+
+# internal permutation and inverse permutation
+# functions that require no memory allocations
+function permute!(x,b,p)
+  @inbounds for j = 1:length(x)
+      x[j] = b[p[j]];
+  end
+  return x
+end
+
+function ipermute!(x,b,p)
+ @inbounds for j = 1:length(x)
+     x[p[j]] = b[j];
+ end
+ return x
+end
 
 
 end #end module
