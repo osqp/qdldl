@@ -135,7 +135,7 @@ function QDLDL_etree!(n,Ap,Ai,work,Lnz,etree)
     @inbounds for i = 1:n
         # zero out Lnz and work.  Set all etree values to unknown
         work[i]  = 0
-        Lnz[i]   = 0i
+        Lnz[i]   = 0
         etree[i] = QDLDL_UNKNOWN
 
         #Abort if A doesn't have at least one entry
