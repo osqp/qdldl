@@ -18,10 +18,10 @@ git clone https://github.com/oxfordcontrol/qdldl.git
 To build QDLDL, you need to install [cmake](https://cmake.org/) and run
 
 ```bash
-mkdir build/
-cd build/
+mkdir build
+cd build
 cmake ..
-make
+cmake --build .
 ```
 
 This will generate an `out/` folder with contents:
