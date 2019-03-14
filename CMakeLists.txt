@@ -142,7 +142,7 @@ install(TARGETS qdldl
 	RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 # Create demo executable (linked to static library)
-add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/c/example.c)
+add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
 target_link_libraries (qdldl_example qdldlstatic)
 
 
