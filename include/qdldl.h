@@ -42,15 +42,14 @@ extern "C" {
   *                -1 if the input does not have triu structure or has an empty
   *                column.
   *
-  *
 */
-
  QDLDL_int QDLDL_etree(const QDLDL_int   n,
                        const QDLDL_int* Ap,
                        const QDLDL_int* Ai,
                        QDLDL_int* work,
                        QDLDL_int* Lnz,
                        QDLDL_int* etree);
+
 
 /**
   * Compute an LDL decomposition for a quasidefinite matrix
@@ -61,21 +60,23 @@ extern "C" {
   * Returns factors L, D and Dinv = 1./D.
   *
   * Does not use MALLOC.  It is assumed that L will be a compressed
-  * sparse column matrix with data (Ln,Lp,Li)  with sufficient space
+  * sparse column matrix with data (Ln,Lp,Li,Lx)  with sufficient space
   * allocated, with a number of nonzeros equal to the count given
-  * as a return value by osqp_ldl_etree
+  * as a return value by QDLDL_etree
   *
   * @param   n     number of columns in L and A (both square)
-  * @param  Ap     column pointers (size n+1) for columns of A
-  * @param  Ai     row indices of A.  Has Ap[n] elements
+  * @param  Ap     column pointers (size n+1) for columns of A (not modified)
+  * @param  Ai     row indices of A.  Has Ap[n] elements (not modified)
+  * @param  Ax     data of A.  Has Ap[n] elements (not modified)
   * @param  Ln     number of columns in CSC matrix L
   * @param  Lp     column pointers (size Ln+1) for columns of L
   * @param  Li     row indices of L.  Has Lp[Ln] elements
+  * @param  Lx     data of L.  Has Lp[Ln] elements
   * @param  D      vectorized factor D.  Length is n
   * @param  Dinv   reciprocal of D.  Length is n
   * @param  Lnz    count of nonzeros in each column of L below diagonal,
-  *                as given by osqp_ldl_etree (not modified)
-  * @param  etree  elimination tree as as given by osqp_ldl_etree (not modified)
+  *                as given by QDLDL_etree (not modified)
+  * @param  etree  elimination tree as as given by QDLDL_etree (not modified)
   * @param  bwork  working array of bools. Length is n
   * @param  iwork  working array of integers. Length is 3*n
   * @param  fwork  working array of floats. Length is n
@@ -85,8 +86,6 @@ extern "C" {
   *                or otherwise LDL factorisable)
   *
 */
-
-
 QDLDL_int QDLDL_factor(const QDLDL_int    n,
                   const QDLDL_int*   Ap,
                   const QDLDL_int*   Ai,
@@ -107,15 +106,14 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   * Solves LDL'x = b
   *
   * It is assumed that L will be a compressed
-  * sparse column matrix with data (Ln,Lp,Li).
+  * sparse column matrix with data (n,Lp,Li,Lx).
   *
-  * @param   n     number of columns in L (both square)
-  * @param  Ln     number of columns in CSC matrix L
+  * @param  n      number of columns in L
   * @param  Lp     column pointers (size Ln+1) for columns of L
   * @param  Li     row indices of L.  Has Lp[Ln] elements
+  * @param  Lx     data of L.  Has Lp[Ln] elements
   * @param  Dinv   reciprocal of D.  Length is n
   * @param  x      initialized to b.  Equal to x on return
-  *
   *
 */
 void QDLDL_solve(const QDLDL_int    n,
@@ -130,40 +128,35 @@ void QDLDL_solve(const QDLDL_int    n,
  * Solves (L+I)x = b
  *
  * It is assumed that L will be a compressed
- * sparse column matrix with data (Ln,Lp,Li).
+ * sparse column matrix with data (n,Lp,Li,Lx).
  *
- * @param   n     number of columns in L (both square)
- * @param  Ln     number of columns in CSC matrix L
+ * @param  n      number of columns in L
  * @param  Lp     column pointers (size Ln+1) for columns of L
  * @param  Li     row indices of L.  Has Lp[Ln] elements
- * @param  Dinv   reciprocal of D.  Length is n
+ * @param  Lx     data of L.  Has Lp[Ln] elements
  * @param  x      initialized to b.  Equal to x on return
  *
- *
 */
-
 void QDLDL_Lsolve(const QDLDL_int    n,
                   const QDLDL_int*   Lp,
                   const QDLDL_int*   Li,
                   const QDLDL_float* Lx,
                   QDLDL_float* x);
 
+
 /**
  * Solves (L+I)'x = b
  *
  * It is assumed that L will be a compressed
- * sparse column matrix with data (Ln,Lp,Li).
+ * sparse column matrix with data (n,Lp,Li,Lx).
  *
- * @param   n     number of columns in L (both square)
- * @param  Ln     number of columns in CSC matrix L
+ * @param  n      number of columns in L
  * @param  Lp     column pointers (size Ln+1) for columns of L
  * @param  Li     row indices of L.  Has Lp[Ln] elements
- * @param  Dinv   reciprocal of D.  Length is n
+ * @param  Lx     data of L.  Has Lp[Ln] elements
  * @param  x      initialized to b.  Equal to x on return
  *
- *
 */
-
 void QDLDL_Ltsolve(const QDLDL_int    n,
                    const QDLDL_int*   Lp,
                    const QDLDL_int*   Li,
