@@ -32,7 +32,7 @@ extern "C" {
   * this function will *not* return an error, as it may still be possible to factor
   * such a matrix in LDL form.   No promises are made in this case though...
   *
-  * @param   n     number of columns in CSC matrix A (assumed square)
+  * @param  n      number of columns in CSC matrix A (assumed square)
   * @param  Ap     column pointers (size n+1) for columns of A
   * @param  Ai     row indices of A.  Has Ap[n] elements
   * @param  work   work vector (size n) (no meaning on return)
@@ -60,18 +60,17 @@ extern "C" {
   * Returns factors L, D and Dinv = 1./D.
   *
   * Does not use MALLOC.  It is assumed that L will be a compressed
-  * sparse column matrix with data (Ln,Lp,Li,Lx)  with sufficient space
+  * sparse column matrix with data (n,Lp,Li,Lx)  with sufficient space
   * allocated, with a number of nonzeros equal to the count given
   * as a return value by QDLDL_etree
   *
-  * @param   n     number of columns in L and A (both square)
+  * @param  n      number of columns in L and A (both square)
   * @param  Ap     column pointers (size n+1) for columns of A (not modified)
   * @param  Ai     row indices of A.  Has Ap[n] elements (not modified)
   * @param  Ax     data of A.  Has Ap[n] elements (not modified)
-  * @param  Ln     number of columns in CSC matrix L
-  * @param  Lp     column pointers (size Ln+1) for columns of L
-  * @param  Li     row indices of L.  Has Lp[Ln] elements
-  * @param  Lx     data of L.  Has Lp[Ln] elements
+  * @param  Lp     column pointers (size n+1) for columns of L
+  * @param  Li     row indices of L.  Has Lp[n] elements
+  * @param  Lx     data of L.  Has Lp[n] elements
   * @param  D      vectorized factor D.  Length is n
   * @param  Dinv   reciprocal of D.  Length is n
   * @param  Lnz    count of nonzeros in each column of L below diagonal,
@@ -109,9 +108,9 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   * sparse column matrix with data (n,Lp,Li,Lx).
   *
   * @param  n      number of columns in L
-  * @param  Lp     column pointers (size Ln+1) for columns of L
-  * @param  Li     row indices of L.  Has Lp[Ln] elements
-  * @param  Lx     data of L.  Has Lp[Ln] elements
+  * @param  Lp     column pointers (size n+1) for columns of L
+  * @param  Li     row indices of L.  Has Lp[n] elements
+  * @param  Lx     data of L.  Has Lp[n] elements
   * @param  Dinv   reciprocal of D.  Length is n
   * @param  x      initialized to b.  Equal to x on return
   *
@@ -131,9 +130,9 @@ void QDLDL_solve(const QDLDL_int    n,
  * sparse column matrix with data (n,Lp,Li,Lx).
  *
  * @param  n      number of columns in L
- * @param  Lp     column pointers (size Ln+1) for columns of L
- * @param  Li     row indices of L.  Has Lp[Ln] elements
- * @param  Lx     data of L.  Has Lp[Ln] elements
+ * @param  Lp     column pointers (size n+1) for columns of L
+ * @param  Li     row indices of L.  Has Lp[n] elements
+ * @param  Lx     data of L.  Has Lp[n] elements
  * @param  x      initialized to b.  Equal to x on return
  *
 */
@@ -151,9 +150,9 @@ void QDLDL_Lsolve(const QDLDL_int    n,
  * sparse column matrix with data (n,Lp,Li,Lx).
  *
  * @param  n      number of columns in L
- * @param  Lp     column pointers (size Ln+1) for columns of L
- * @param  Li     row indices of L.  Has Lp[Ln] elements
- * @param  Lx     data of L.  Has Lp[Ln] elements
+ * @param  Lp     column pointers (size n+1) for columns of L
+ * @param  Li     row indices of L.  Has Lp[n] elements
+ * @param  Lx     data of L.  Has Lp[n] elements
  * @param  x      initialized to b.  Equal to x on return
  *
 */
