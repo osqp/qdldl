@@ -4,31 +4,6 @@
 #define QDLDL_USED (1)
 #define QDLDL_UNUSED (0)
 
-// //DEBUG
-// #include <stdio.h>
-// void qdprint_arrayi(const QDLDL_int* data, QDLDL_int n,char* varName){
-
-//   QDLDL_int i;
-//   printf("%s = [",varName);
-//   for(i=0; i< n; i++){
-//     printf("%lli,",data[i]);
-//   }
-//   printf("]\n");
-
-// }
-
-// void qdprint_arrayf(const QDLDL_float* data, QDLDL_int n, char* varName){
-
-//   QDLDL_int i;
-//   printf("%s = [",varName);
-//   for(i=0; i< n; i++){
-//     printf("%.3g,",data[i]);
-//   }
-//   printf("]\n");
-
-// }
-// // END DEBUG
-
 /* Compute the elimination tree for a quasidefinite matrix
    in compressed sparse column form.
 */
@@ -40,7 +15,7 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
                       QDLDL_int* Lnz,
                       QDLDL_int* etree){
 
-  QDLDL_int sumLnz = 0;
+  QDLDL_int sumLnz, prevSum;
   QDLDL_int i,j,p;
 
 
@@ -75,8 +50,19 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
   }
 
   //compute the total nonzeros in L.  This much
-  //space is required to store Li and Lx
-  for(i = 0; i < n; i++){sumLnz += Lnz[i];}
+  //space is required to store Li and Lx.  If the
+  //sequence of partial sums is not monotone, it
+  //is because sumLnz has overflowed.
+  //size
+  sumLnz  = 0;
+  for(i = 0; i < n; i++){
+    prevSum = sumLnz;
+    sumLnz += Lnz[i];
+    if(sumLnz < prevSum){
+      sumLnz = -2;
+      break;        //overflow: return error code -2
+    }
+  }
 
   return sumLnz;
 }
