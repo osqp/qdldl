@@ -18,15 +18,15 @@ git clone https://github.com/oxfordcontrol/qdldl.git
 To build QDLDL, you need to install [cmake](https://cmake.org/) and run
 
 ```bash
-mkdir build/
-cd build/
+mkdir build
+cd build
 cmake ..
-make
+cmake --build .
 ```
 
 This will generate an `out/` folder with contents:
 
-- `qdldl_example`: a **code example** from [`examples/c/example.c`](./examples/c/example.c)
+- `qdldl_example`: a **code example** from [`examples/example.c`](./examples/example.c)
 - `libqdldl`: a static and a dynamic versions of the library.
 
 You can include an addition option `-DUNITTESTS=ON` when calling `cmake`, which will result in an additional executable `qdldl_tester` being built in the `out/` folder to test QDLDL on a variety of problems, including those with rank deficient or otherwise ill-formatted inputs.
@@ -44,7 +44,7 @@ To install (uninstall) the libraries and headers you can simply run `make instal
 ### Main API
 
 The QDLDL API consists of 5 functions documented in [`include/qdldl.h`](./include/qdldl.h).
-For more details and a working example see [`examples/c/example.c`](./examples/c/example.c).
+For more details and a working example see [`examples/example.c`](./examples/example.c).
 
 **N.B.** There is **no memory allocation** performed in these routines. The user is assumed to have the working vectors already allocated.
 
@@ -74,7 +74,7 @@ The `QDLDL_bool` is internally defined as `unsigned char`.
 ## Linking QDLDL
 
 ### Basic Example
-A basic example appears in [`examples/c/example.c`](./examples/c/example.c) and is compiled using cmake and the `CMakeLists.txt` file in the root folder.
+A basic example appears in [`examples/example.c`](./examples/example.c) and is compiled using cmake and the `CMakeLists.txt` file in the root folder.
 
 
 ### Including in a cmake project
@@ -117,4 +117,4 @@ The algorithm is an independent implementation of the elimination tree and facto
 
 - [Paul Goulart](http://users.ox.ac.uk/~engs1373/): main development
 - [Bartolomeo Stellato](https://stellato.io/): code refactoring and testing
-- [Goran Banjac](http://control.ee.ethz.ch/~gbanjac/)
+- [Goran Banjac](https://people.ee.ethz.ch/~gbanjac/)
