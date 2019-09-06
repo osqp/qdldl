@@ -60,8 +60,10 @@ endif()
 
 if(DLONG)
   set(QDLDL_INT_TYPE "long long")
+	set(QDLDL_INT_TYPE_MAX "LLONG_MAX")
 else()
 	set(QDLDL_INT_TYPE "int")
+	set(QDLDL_INT_TYPE_MAX "INT_MAX")
 endif()
 
 #boolean type is always unsigned char
