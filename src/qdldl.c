@@ -57,7 +57,7 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
   for(i = 0; i < n; i++){
     if(sumLnz > QDLDL_INT_MAX - Lnz[i]){
       sumLnz = -2;
-      break;        //overflow: return error code -2
+      break;
     }
     else{
       sumLnz += Lnz[i];
