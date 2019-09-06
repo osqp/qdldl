@@ -38,9 +38,9 @@ extern "C" {
   * @param  work   work vector (size n) (no meaning on return)
   * @param  Lnz    count of nonzeros in each column of L (size n) below diagonal
   * @param  etree  elimination tree (size n)
-  * @return total  sum of Lnz (i.e. total nonzeros in L below diagonal). Returns
-  *                -1 if the input does not have triu structure or has an empty
-  *                column.
+  * @return total  sum of Lnz (i.e. total nonzeros in L below diagonal).
+  *                Returns -1 if the input is not triu or has an empty column.
+  *                Returns -2 if the return value overflows QDLDL_int.
   *
 */
  QDLDL_int QDLDL_etree(const QDLDL_int   n,
