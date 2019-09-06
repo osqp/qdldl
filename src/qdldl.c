@@ -15,7 +15,7 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
                       QDLDL_int* Lnz,
                       QDLDL_int* etree){
 
-  QDLDL_int sumLnz, prevSum;
+  QDLDL_int sumLnz;
   QDLDL_int i,j,p;
 
 
