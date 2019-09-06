@@ -16,9 +16,6 @@ typedef @QDLDL_BOOL_TYPE@   QDLDL_bool;  /* for boolean values  */
 //Maximum value of the signed type QDLDL_int.
 #define QDLDL_INT_MAX @QDLDL_INT_TYPE_MAX@
 
-//This should also work on any 2's complement based arch, without limits.h
-// #define QDLDL_INT_MAX (((((QDLDL_int)1<<(sizeof(QDLDL_int)*8-2))-1)*2)+1)
-
 # ifdef __cplusplus
 }
 # endif /* ifdef __cplusplus */
