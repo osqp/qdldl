@@ -50,17 +50,17 @@ QDLDL_int QDLDL_etree(const QDLDL_int  n,
   }
 
   //compute the total nonzeros in L.  This much
-  //space is required to store Li and Lx.  If the
-  //sequence of partial sums is not monotone, it
-  //is because sumLnz has overflowed.
-  //size
+  //space is required to store Li and Lx.  Return
+  //error code -2 if the nonzero count will overflow
+  //its unteger type.
   sumLnz  = 0;
   for(i = 0; i < n; i++){
-    prevSum = sumLnz;
-    sumLnz += Lnz[i];
-    if(sumLnz < prevSum){
+    if(sumLnz > QDLDL_INT_MAX - Lnz[i]){
       sumLnz = -2;
       break;        //overflow: return error code -2
+    }
+    else{
+      sumLnz += Lnz[i];
     }
   }
 

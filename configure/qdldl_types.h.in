@@ -11,6 +11,10 @@ typedef @QDLDL_INT_TYPE@    QDLDL_int;   /* for indices */
 typedef @QDLDL_FLOAT_TYPE@  QDLDL_float; /* for numerical values  */
 typedef @QDLDL_BOOL_TYPE@   QDLDL_bool;  /* for boolean values  */
 
+//Compute maximum value of the signed type QDLDL_int.
+//This should work on any 2's complement based arch.
+#define QDLDL_INT_MAX (((((QDLDL_int)1<<(sizeof(QDLDL_int)*8-2))-1)*2)+1)
+
 # ifdef __cplusplus
 }
 # endif /* ifdef __cplusplus */
