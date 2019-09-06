@@ -1,3 +1,8 @@
+Version 0.1.4 (6 September 2019)
+---------------------------------
+*   Fix to cmake when building `qdldl::qdldlstatic` 
+*   Fix to overflow issue when factoring very large matrices 
+
 Version 0.1.3 (11 September 2018)
 ----------------------------------
 *   Julia implementation supports logical factorisation.
