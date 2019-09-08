@@ -106,6 +106,26 @@ add_library(foo foo.c foo.h $<TARGET_OBJECTS:qdldlobject>)
 for more details see the [cmake documentation](https://cmake.org/cmake/help/latest/command/add_library.html#object-libraries).
 
 
+## Citing
+If you find this code useful for your research, please cite the following paper available in this [preprint](https://arxiv.org/pdf/1711.08013.pdf)
+
+```
+@article{osqp,
+  author = {Stellato, B. and Banjac, G. and Goulart, P. and Bemporad, A. and Boyd, S.},
+  title = {{OSQP}: An Operator Splitting Solver for Quadratic Programs},
+  journal = {ArXiv e-prints},
+  year = {2017},
+  month = nov,
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+  adsurl = {http://adsabs.harvard.edu/abs/2017arXiv171108013S},
+  archiveprefix = {arXiv},
+  eprint = {1711.08013},
+  keywords = {Mathematics - Optimization and Control},
+  primaryclass = {math.OC},
+}
+```
+
+
 ## The algorithm
 
 The algorithm is an independent implementation of the elimination tree and factorisation procedures outlined in
