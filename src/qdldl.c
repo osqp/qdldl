@@ -239,11 +239,12 @@ void QDLDL_Lsolve(const QDLDL_int    n,
                   const QDLDL_float* Lx,
                   QDLDL_float* x){
 
-QDLDL_int i,j;
+  QDLDL_int i,j;
   for(i = 0; i < n; i++){
-      for(j = Lp[i]; j < Lp[i+1]; j++){
-          x[Li[j]] -= Lx[j]*x[i];
-      }
+    QDLDL_float val = x[i];
+    for(j = Lp[i]; j < Lp[i+1]; j++){
+      x[Li[j]] -= Lx[j]*val;
+    }
   }
 }
 
@@ -254,11 +255,13 @@ void QDLDL_Ltsolve(const QDLDL_int    n,
                    const QDLDL_float* Lx,
                    QDLDL_float* x){
 
-QDLDL_int i,j;
+  QDLDL_int i,j;
   for(i = n-1; i>=0; i--){
-      for(j = Lp[i]; j < Lp[i+1]; j++){
-          x[i] -= Lx[j]*x[Li[j]];
-      }
+    QDLDL_float val = x[i];
+    for(j = Lp[i]; j < Lp[i+1]; j++){
+      val -= Lx[j]*x[Li[j]];
+    }
+    x[i] = val;
   }
 }
 
@@ -270,10 +273,9 @@ void QDLDL_solve(const QDLDL_int       n,
                     const QDLDL_float* Dinv,
                     QDLDL_float* x){
 
-QDLDL_int i;
+  QDLDL_int i;
 
-QDLDL_Lsolve(n,Lp,Li,Lx,x);
-for(i = 0; i < n; i++) x[i] *= Dinv[i];
-QDLDL_Ltsolve(n,Lp,Li,Lx,x);
-
+  QDLDL_Lsolve(n,Lp,Li,Lx,x);
+  for(i = 0; i < n; i++) x[i] *= Dinv[i];
+  QDLDL_Ltsolve(n,Lp,Li,Lx,x);
 }
