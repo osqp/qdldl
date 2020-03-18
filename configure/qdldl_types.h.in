@@ -2,10 +2,14 @@
 # define QDLDL_TYPES_H
 
 # ifdef __cplusplus
+// C++
+#include <climits>
 extern "C" {
+# else
+// C
+#include <limits.h> //for the QDLDL_INT_TYPE_MAX
 # endif /* ifdef __cplusplus */
 
-#include <limits.h> //for the QDLDL_INT_TYPE_MAX
 
 // QDLDL integer and float types
 
