@@ -82,6 +82,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_types.h.in
                ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_types.h
                NEWLINE_STYLE LF)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_version.h.in
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_version.h
+               NEWLINE_STYLE LF)
+
 
 # Set sources
 # ----------------------------------------------
@@ -94,6 +98,7 @@ set(
 	qdldl_headers
 	include/qdldl.h
 	include/qdldl_types.h
+	include/qdldl_version.h
 	)
 
 # Create object library
