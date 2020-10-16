@@ -114,17 +114,15 @@ If you find this code useful for your research, please cite the following paper 
 
 ```
 @article{osqp,
-  author = {Stellato, B. and Banjac, G. and Goulart, P. and Bemporad, A. and Boyd, S.},
-  title = {{OSQP}: An Operator Splitting Solver for Quadratic Programs},
-  journal = {ArXiv e-prints},
-  year = {2017},
-  month = nov,
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
-  adsurl = {http://adsabs.harvard.edu/abs/2017arXiv171108013S},
-  archiveprefix = {arXiv},
-  eprint = {1711.08013},
-  keywords = {Mathematics - Optimization and Control},
-  primaryclass = {math.OC},
+  author  = {Stellato, B. and Banjac, G. and Goulart, P. and Bemporad, A. and Boyd, S.},
+  title   = {{OSQP}: an operator splitting solver for quadratic programs},
+  journal = {Mathematical Programming Computation},
+  year    = {2020},
+  volume  = {12},
+  number  = {4},
+  pages   = {637--672},
+  doi     = {10.1007/s12532-020-00179-2},
+  url     = {https://doi.org/10.1007/s12532-020-00179-2},
 }
 ```
 
@@ -133,7 +131,7 @@ If you find this code useful for your research, please cite the following paper 
 
 The algorithm is an independent implementation of the elimination tree and factorisation procedures outlined in
 
-> T. A Davis. [Algorithm 849: a concise sparse cholesky factorization package](https://dl.acm.org/citation.cfm?id=1114277). ACM Trans. Math. Softw., 31(4):587–591, 2005.
+> T. A Davis. [Algorithm 849: A concise sparse Cholesky factorization package](https://dl.acm.org/citation.cfm?id=1114277). ACM Trans. Math. Softw., 31(4):587–591, 2005.
 
 
 ## Credits
