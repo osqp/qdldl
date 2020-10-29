@@ -1,8 +1,14 @@
 # Minimum version required
 cmake_minimum_required (VERSION 3.2)
 
+set(QDLDL_VERSION_MAJOR "0")
+set(QDLDL_VERSION_MINOR "1")
+set(QDLDL_VERSION_PATCH "6")
+set(QDLDL_VERSION "${QDLDL_VERSION_MAJOR}.${QDLDL_VERSION_MINOR}.${QDLDL_VERSION_PATCH}")
+
 # Project name
-project (qdldl)
+project(qdldl VERSION ${QDLDL_VERSION})
+
 
 # Set the output folder where your program will be created
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
@@ -76,6 +82,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_types.h.in
                ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_types.h
                NEWLINE_STYLE LF)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_version.h.in
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_version.h
+               NEWLINE_STYLE LF)
+
 
 # Set sources
 # ----------------------------------------------
@@ -88,6 +98,7 @@ set(
 	qdldl_headers
 	include/qdldl.h
 	include/qdldl_types.h
+	include/qdldl_version.h
 	)
 
 # Create object library
@@ -152,6 +163,11 @@ target_link_libraries (qdldl_example qdldlstatic)
 # ----------------------------------------------
 include(CMakePackageConfigHelpers)
 
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake"
+  VERSION ${QDLDL_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
 export(EXPORT ${PROJECT_NAME}
   FILE "${CMAKE_CURRENT_BINARY_DIR}/qdldl-targets.cmake"
   NAMESPACE qdldl::)
@@ -164,7 +180,7 @@ endif()
 # Create CMake packages for the install directory
 # ----------------------------------------------
 
-set(ConfigPackageLocation lib/cmake/qdldl)
+set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/qdldl)
 
 install(EXPORT ${PROJECT_NAME}
         FILE qdldl-targets.cmake
@@ -172,6 +188,7 @@ install(EXPORT ${PROJECT_NAME}
         DESTINATION ${ConfigPackageLocation})
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake
         DESTINATION ${ConfigPackageLocation})
 
 

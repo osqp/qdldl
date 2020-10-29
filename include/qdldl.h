@@ -3,6 +3,7 @@
 
 // Include qdldl type options
 #include "qdldl_types.h"
+#include "qdldl_version.h"
 
 # ifdef __cplusplus
 extern "C" {
