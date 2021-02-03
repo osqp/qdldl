@@ -1,0 +1,21 @@
+#ifndef QDLDL_CONFIGURE_H
+# define QDLDL_CONFIGURE_H
+
+# ifdef __cplusplus
+extern "C" {
+# endif /* ifdef __cplusplus */
+
+/* DEBUG */
+#cmakedefine DEBUG
+
+/* DFLOAT */
+#cmakedefine DFLOAT
+
+/* DLONG */
+#cmakedefine DLONG
+
+# ifdef __cplusplus
+}
+# endif /* ifdef __cplusplus */
+
+#endif /* ifndef QDLDL_CONFIGURE_H */

@@ -78,6 +78,12 @@ endif()
 #problems when calling QDLDL from C++
 set(QDLDL_BOOL_TYPE "unsigned char")
 
+# Generate header file with the global options
+# ---------------------------------------------
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_configure.h.in
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_configure.h
+               NEWLINE_STYLE LF)
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_types.h.in
                ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_types.h
                NEWLINE_STYLE LF)
