@@ -19,6 +19,7 @@ cmake_dependent_option( QDLDL_BUILD_DEMO_EXE
                         ON    # Default to on
                         QDLDL_BUILD_STATIC_LIB OFF ) # Force off if the static library isn't built
 
+option( QDLDL_UNITTESTS "Build the unit testing suite" OFF )
 
 # Set the output folder where your program will be created
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
@@ -236,7 +237,8 @@ endif()
 # Add testing
 # ----------------------------------------------
 # Add custom command to generate tests
-if (UNITTESTS)
+if( QDLDL_UNITTESTS )
+    message( STATUS "Configuring unit testing suite" )
 
     # Add test_headers and codegen_test_headers
     add_subdirectory(tests)

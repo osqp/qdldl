@@ -25,7 +25,7 @@ script:
   cd ${TRAVIS_BUILD_DIR}
   mkdir -p build
   cd build
-  cmake --warn-uninitialized -DUNITTESTS=ON -DCOVERAGE=ON ..
+  cmake --warn-uninitialized -DQDLDL_UNITTESTS=ON -DCOVERAGE=ON ..
   make
   out/qdldl_tester
 
