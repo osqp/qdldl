@@ -55,9 +55,10 @@ if (NOT MSVC)
 
     if (COVERAGE)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-	if(FORTRAN)
-		set(CMAKE_FORTRAN_FLAGS "${CMAKE_FORTRAN_FLAGS} --coverage")
-	endif(FORTRAN)
+
+	      if(FORTRAN)
+		        set(CMAKE_FORTRAN_FLAGS "${CMAKE_FORTRAN_FLAGS} --coverage")
+	      endif(FORTRAN)
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
@@ -230,7 +231,6 @@ if( QDLDL_BUILD_SHARED_LIB OR QDLDL_BUILD_STATIC_LIB)
             COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
     endif()
 endif()
-
 
 
 # Add testing
