@@ -34,12 +34,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Options
 # ----------------------------------------------
 # Use floats instead of doubles
-set(DFLOAT OFF CACHE BOOL "Use float numbers instead of doubles")
+option( DFLOAT "Use float numbers instead of doubles" OFF )
 message(STATUS "Floats are ${DFLOAT}")
 
 # Use long integers for indexing
-set(DLONG ON CACHE BOOL "Use long integers (64bit) for indexing")
-if (NOT (CMAKE_SIZEOF_VOID_P EQUAL 8))
+option( DLONG "Use long integers (64bit) for indexing" ON )
+
+if( NOT (CMAKE_SIZEOF_VOID_P EQUAL 8) )
 	message(STATUS "Disabling long integers (64bit) on 32bit machine")
 	set(DLONG OFF)
 endif()
