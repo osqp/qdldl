@@ -125,9 +125,9 @@ target_include_directories(qdldlobject PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 include(GNUInstallDirs)
 
-if( QDLDL_BUILD_STATIC_LIB )
-    message( STATUS "Configuring static library" )
+message( STATUS "Static library build is ${QDLDL_BUILD_STATIC_LIB}" )
 
+if( QDLDL_BUILD_STATIC_LIB )
     # Static library
     add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
     # Give same name to static library output
@@ -146,8 +146,6 @@ if( QDLDL_BUILD_STATIC_LIB )
             ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
             LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
             RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
-else()
-    message( STATUS "Not building static library" )
 endif()
 
 # Install Headers
@@ -158,9 +156,9 @@ install(FILES ${qdldl_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/qdldl")
 # Install Shared Library
 # ----------------------------------------------
 # Create qdldl shared library
-if( QDLDL_BUILD_SHARED_LIB )
-    message( STATUS "Configuring shared library" )
+message( STATUS "Shared library build is ${QDLDL_BUILD_SHARED_LIB}" )
 
+if( QDLDL_BUILD_SHARED_LIB )
     add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
 
     # Declare include directories for the cmake exported target
@@ -174,13 +172,11 @@ if( QDLDL_BUILD_SHARED_LIB )
     	LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     	ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     	RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
-else()
-    message( STATUS "Not building shared library" )
 endif()
 
-if( QDLDL_BUILD_DEMO_EXE )
-    message( STATUS "Configuring demo executable" )
+message( STATUS "Demo executable build is ${QDLDL_BUILD_DEMO_EXE}" )
 
+if( QDLDL_BUILD_DEMO_EXE )
     # Create demo executable (linked to static library)
     add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
     target_link_libraries (qdldl_example qdldlstatic)
@@ -238,9 +234,9 @@ endif()
 # Add testing
 # ----------------------------------------------
 # Add custom command to generate tests
-if( QDLDL_UNITTESTS )
-    message( STATUS "Configuring unit testing suite" )
+message( STATUS "Unit testing suite build is ${QDLDL_UNITTESTS}" )
 
+if( QDLDL_UNITTESTS )
     # Add test_headers and codegen_test_headers
     add_subdirectory(tests)
 
