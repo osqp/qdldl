@@ -19,7 +19,10 @@ cmake_dependent_option( QDLDL_BUILD_DEMO_EXE
                         ON    # Default to on
                         QDLDL_BUILD_STATIC_LIB OFF ) # Force off if the static library isn't built
 
-option( QDLDL_UNITTESTS "Build the unit testing suite" OFF )
+cmake_dependent_option( QDLDL_UNITTESTS
+                        "Build the unit testing suite"
+                        OFF    # Default to off
+                        QDLDL_BUILD_STATIC_LIB OFF ) # Force off if the static library isn't built
 
 # Set the output folder where your program will be created
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
