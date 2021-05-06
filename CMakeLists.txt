@@ -9,6 +9,16 @@ set(QDLDL_VERSION "${QDLDL_VERSION_MAJOR}.${QDLDL_VERSION_MINOR}.${QDLDL_VERSION
 # Project name
 project(qdldl VERSION ${QDLDL_VERSION})
 
+include( CMakeDependentOption )
+
+option( QDLDL_BUILD_STATIC_LIB "Build the static library" ON )
+option( QDLDL_BUILD_SHARED_LIB "Build the shared library" ON )
+
+cmake_dependent_option( QDLDL_BUILD_DEMO_EXE
+                        "Build the demo executable (requires the static library)"
+                        ON    # Default to on
+                        QDLDL_BUILD_STATIC_LIB OFF ) # Force off if the static library isn't built
+
 
 # Set the output folder where your program will be created
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
@@ -112,25 +122,30 @@ target_include_directories(qdldlobject PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 include(GNUInstallDirs)
 
-# Static library
-add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
-# Give same name to static library output
-set_target_properties(qdldlstatic PROPERTIES OUTPUT_NAME qdldl)
+if( QDLDL_BUILD_STATIC_LIB )
+    message( STATUS "Configuring static library" )
 
-# Declare include directories for the cmake exported target
-target_include_directories(qdldlstatic
-                           PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                                  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
+    # Static library
+    add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
+    # Give same name to static library output
+    set_target_properties(qdldlstatic PROPERTIES OUTPUT_NAME qdldl)
 
-# Install Static Library
-# ----------------------------------------------
+    # Declare include directories for the cmake exported target
+    target_include_directories(qdldlstatic
+                               PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+                                      "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
-install(TARGETS qdldlstatic
-        EXPORT  ${PROJECT_NAME}
-        ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    # Install Static Library
+    # ----------------------------------------------
 
+    install(TARGETS qdldlstatic
+            EXPORT  ${PROJECT_NAME}
+            ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+else()
+    message( STATUS "Not building static library" )
+endif()
 
 # Install Headers
 # ----------------------------------------------
@@ -140,69 +155,80 @@ install(FILES ${qdldl_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/qdldl")
 # Install Shared Library
 # ----------------------------------------------
 # Create qdldl shared library
-add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
+if( QDLDL_BUILD_SHARED_LIB )
+    message( STATUS "Configuring shared library" )
 
-# Declare include directories for the cmake exported target
-target_include_directories(qdldl
-	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-	"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
+    add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
 
-# Install qdldl shared library
-install(TARGETS qdldl
-	EXPORT  ${PROJECT_NAME}
-	LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-	ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-	RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    # Declare include directories for the cmake exported target
+    target_include_directories(qdldl
+    	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    	"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
-# Create demo executable (linked to static library)
-add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
-target_link_libraries (qdldl_example qdldlstatic)
+    # Install qdldl shared library
+    install(TARGETS qdldl
+    	EXPORT  ${PROJECT_NAME}
+    	LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    	ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    	RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+else()
+    message( STATUS "Not building shared library" )
+endif()
 
+if( QDLDL_BUILD_DEMO_EXE )
+    message( STATUS "Configuring demo executable" )
+
+    # Create demo executable (linked to static library)
+    add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
+    target_link_libraries (qdldl_example qdldlstatic)
+else()
+    message( STATUS "Not building demo executable" )
+endif()
 
 # Create CMake packages for the build directory
 # ----------------------------------------------
-include(CMakePackageConfigHelpers)
+if( QDLDL_BUILD_SHARED_LIB OR QDLDL_BUILD_STATIC_LIB)
+    include(CMakePackageConfigHelpers)
 
-write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake"
-  VERSION ${QDLDL_VERSION}
-  COMPATIBILITY SameMajorVersion
-)
+    write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake"
+      VERSION ${QDLDL_VERSION}
+      COMPATIBILITY SameMajorVersion
+    )
 
-export(EXPORT ${PROJECT_NAME}
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/qdldl-targets.cmake"
-  NAMESPACE qdldl::)
+    export(EXPORT ${PROJECT_NAME}
+      FILE "${CMAKE_CURRENT_BINARY_DIR}/qdldl-targets.cmake"
+      NAMESPACE qdldl::)
 
-if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake)
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake "include(\"\${CMAKE_CURRENT_LIST_DIR}/qdldl-targets.cmake\")\n")
-endif()
-
-
-# Create CMake packages for the install directory
-# ----------------------------------------------
-
-set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/qdldl)
-
-install(EXPORT ${PROJECT_NAME}
-        FILE qdldl-targets.cmake
-        NAMESPACE qdldl::
-        DESTINATION ${ConfigPackageLocation})
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake
-        DESTINATION ${ConfigPackageLocation})
+    if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake)
+      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake "include(\"\${CMAKE_CURRENT_LIST_DIR}/qdldl-targets.cmake\")\n")
+    endif()
 
 
+    # Create CMake packages for the install directory
+    # ----------------------------------------------
 
-# Add uninstall command
-# ----------------------------------------------
-if(NOT TARGET uninstall)
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/configure/cmake/cmake_uninstall.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-        IMMEDIATE @ONLY)
+    set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/qdldl)
 
-    add_custom_target(uninstall
-        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    install(EXPORT ${PROJECT_NAME}
+            FILE qdldl-targets.cmake
+            NAMESPACE qdldl::
+            DESTINATION ${ConfigPackageLocation})
+
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake
+                  ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake
+            DESTINATION ${ConfigPackageLocation})
+
+    # Add uninstall command
+    # ----------------------------------------------
+    if(NOT TARGET uninstall)
+        configure_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/configure/cmake/cmake_uninstall.cmake.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+            IMMEDIATE @ONLY)
+
+        add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    endif()
 endif()
 
 
