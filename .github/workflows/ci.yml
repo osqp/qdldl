@@ -1,0 +1,40 @@
+name: Build and test QDLDL
+
+on: [push, pull_request]
+
+env:
+  # The CMake build type
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Setup Environment
+        run: cmake -E make_directory ${{ runner.workspace }}/build
+
+      - name: Configure
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUNITTESTS=ON -DCOVERAGE=ON $GITHUB_WORKSPACE
+
+      - name: Build
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --build . --config $BUILD_TYPE
+
+      - name: Run tests
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: ctest -C $BUILD_TYPE
