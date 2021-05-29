@@ -12,6 +12,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            coverage: ON
+          - os: macos-latest
+            coverage: OFF
+          - os: windows-latest
+            coverage: OFF
 
     runs-on: ${{ matrix.os }}
 
@@ -27,7 +34,7 @@ jobs:
       - name: Configure
         shell: bash
         working-directory: ${{ runner.workspace }}/build
-        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUNITTESTS=ON -DCOVERAGE=ON $GITHUB_WORKSPACE
+        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUNITTESTS=ON -DCOVERAGE=${{ matrix.coverage }} $GITHUB_WORKSPACE
 
       - name: Build
         shell: bash
@@ -38,6 +45,16 @@ jobs:
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: ctest -C $BUILD_TYPE
+
+        # Only parse and upload coverage if it was generated
+      - name: Process coverage
+        if: ${{ matrix.coverage == 'ON' }}
+        uses: imciner2/run-lcov@main
+        with:
+          input_directory: '${{ runner.workspace }}/build'
+          exclude: '"$GITHUB_WORKSPACE/tests/*" "$GITHUB_WORKSPACE/examples/*" "/usr/include/x86_64-linux-gnu/bits/*"'
+          output_file: '${{ runner.workspace }}/build/coverage.info'
+
 
   test_configs:
     strategy:
