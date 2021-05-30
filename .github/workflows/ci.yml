@@ -49,11 +49,18 @@ jobs:
         # Only parse and upload coverage if it was generated
       - name: Process coverage
         if: ${{ matrix.coverage == 'ON' }}
-        uses: imciner2/run-lcov@main
+        uses: imciner2/run-lcov@v1
         with:
           input_directory: '${{ runner.workspace }}/build'
           exclude: '"$GITHUB_WORKSPACE/tests/*" "$GITHUB_WORKSPACE/examples/*" "/usr/include/x86_64-linux-gnu/bits/*"'
           output_file: '${{ runner.workspace }}/build/coverage.info'
+
+      - name: Upload coverage
+        if: ${{ matrix.coverage == 'ON' }}
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: '${{ runner.workspace }}/build/coverage.info'
 
 
   test_configs:
