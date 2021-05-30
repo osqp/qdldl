@@ -87,7 +87,7 @@ jobs:
       - name: Configure
         shell: bash
         working-directory: ${{ runner.workspace }}/build
-        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DDFLOAT=${{ matrix.float }} -DDLONG=${{ matrix.long }} -DUNITTESTS=ON -DCOVERAGE=ON $GITHUB_WORKSPACE
+        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DDFLOAT=${{ matrix.float }} -DDLONG=${{ matrix.long }} -DUNITTESTS=ON -DCOVERAGE=OFF $GITHUB_WORKSPACE
 
       - name: Build
         shell: bash
