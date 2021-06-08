@@ -2,17 +2,17 @@
 A free LDL factorisation routine for quasi-definite linear systems: `Ax=b`
 
 [![Build Status](https://github.com/osqp/qdldl/actions/workflows/ci.yml/badge.svg)](https://github.com/osqp/qdldl/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/oxfordcontrol/qdldl/badge.svg)](https://coveralls.io/github/osqp/qdldl)
+[![Coverage Status](https://coveralls.io/repos/github/osqp/qdldl/badge.svg)](https://coveralls.io/github/osqp/qdldl)
 
 ## Interfaces
 
-You can find a Python interface at [qdldl-python](https://github.com/oxfordcontrol/qdldl-python) and a pure Julia implementation at [QDLDL.jl](https://github.com/oxfordcontrol/QDLDL.jl).
+You can find a Python interface at [qdldl-python](https://github.com/osqp/qdldl-python) and a pure Julia implementation at [QDLDL.jl](https://github.com/osqp/QDLDL.jl).
 
 ## Getting started
 To start using QDLDL, first clone the repository
 
 ```bash
-git clone https://github.com/oxfordcontrol/qdldl.git
+git clone https://github.com/osqp/qdldl.git
 ```
 
 ### Build
