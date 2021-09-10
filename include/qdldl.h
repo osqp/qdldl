@@ -5,6 +5,29 @@
 #include "qdldl_types.h"
 #include "qdldl_version.h"
 
+// Define the function attributes that are needed to mark functions as being
+// visible for linking in the shared library version of QDLDL
+#if defined(_WIN32)
+#  if defined(BUILDING_QDLDL)
+#    define QDLDL_API_EXPORT __declspec(dllexport)
+#  else
+#    define QDLDL_API_EXPORT __declspec(dllimport)
+#  endif
+#else
+#  if defined(BUILDING_QDLDL)
+#    define QDLDL_API_EXPORT __attribute__((visibility("default")))
+#  else
+#    define QDLDL_API_EXPORT
+#  endif
+#endif
+
+// Only define API export parts when using the shared library
+#if defined(QDLDL_SHARED_LIB)
+#  define QDLDL_API QDLDL_API_EXPORT
+#else
+#  define QDLDL_API
+#endif
+
 # ifdef __cplusplus
 extern "C" {
 # endif // ifdef __cplusplus
@@ -44,12 +67,12 @@ extern "C" {
   *                Returns -2 if the return value overflows QDLDL_int.
   *
 */
- QDLDL_int QDLDL_etree(const QDLDL_int   n,
-                       const QDLDL_int* Ap,
-                       const QDLDL_int* Ai,
-                       QDLDL_int* work,
-                       QDLDL_int* Lnz,
-                       QDLDL_int* etree);
+QDLDL_API QDLDL_int QDLDL_etree(const QDLDL_int   n,
+                                const QDLDL_int* Ap,
+                                const QDLDL_int* Ai,
+                                QDLDL_int* work,
+                                QDLDL_int* Lnz,
+                                QDLDL_int* etree);
 
 
 /**
@@ -86,20 +109,20 @@ extern "C" {
   *                or otherwise LDL factorisable)
   *
 */
-QDLDL_int QDLDL_factor(const QDLDL_int    n,
-                  const QDLDL_int*   Ap,
-                  const QDLDL_int*   Ai,
-                  const QDLDL_float* Ax,
-                  QDLDL_int*   Lp,
-                  QDLDL_int*   Li,
-                  QDLDL_float* Lx,
-                  QDLDL_float* D,
-                  QDLDL_float* Dinv,
-                  const QDLDL_int* Lnz,
-                  const QDLDL_int* etree,
-                  QDLDL_bool* bwork,
-                  QDLDL_int* iwork,
-                  QDLDL_float* fwork);
+QDLDL_API QDLDL_int QDLDL_factor(const QDLDL_int    n,
+                                 const QDLDL_int*   Ap,
+                                 const QDLDL_int*   Ai,
+                                 const QDLDL_float* Ax,
+                                 QDLDL_int*   Lp,
+                                 QDLDL_int*   Li,
+                                 QDLDL_float* Lx,
+                                 QDLDL_float* D,
+                                 QDLDL_float* Dinv,
+                                 const QDLDL_int* Lnz,
+                                 const QDLDL_int* etree,
+                                 QDLDL_bool* bwork,
+                                 QDLDL_int* iwork,
+                                 QDLDL_float* fwork);
 
 
 /**
@@ -116,12 +139,12 @@ QDLDL_int QDLDL_factor(const QDLDL_int    n,
   * @param  x      initialized to b.  Equal to x on return
   *
 */
-void QDLDL_solve(const QDLDL_int    n,
-                 const QDLDL_int*   Lp,
-                 const QDLDL_int*   Li,
-                 const QDLDL_float* Lx,
-                 const QDLDL_float* Dinv,
-                 QDLDL_float* x);
+QDLDL_API void QDLDL_solve(const QDLDL_int    n,
+                           const QDLDL_int*   Lp,
+                           const QDLDL_int*   Li,
+                           const QDLDL_float* Lx,
+                           const QDLDL_float* Dinv,
+                           QDLDL_float* x);
 
 
 /**
@@ -137,11 +160,11 @@ void QDLDL_solve(const QDLDL_int    n,
  * @param  x      initialized to b.  Equal to x on return
  *
 */
-void QDLDL_Lsolve(const QDLDL_int    n,
-                  const QDLDL_int*   Lp,
-                  const QDLDL_int*   Li,
-                  const QDLDL_float* Lx,
-                  QDLDL_float* x);
+QDLDL_API void QDLDL_Lsolve(const QDLDL_int    n,
+                            const QDLDL_int*   Lp,
+                            const QDLDL_int*   Li,
+                            const QDLDL_float* Lx,
+                            QDLDL_float* x);
 
 
 /**
@@ -157,11 +180,11 @@ void QDLDL_Lsolve(const QDLDL_int    n,
  * @param  x      initialized to b.  Equal to x on return
  *
 */
-void QDLDL_Ltsolve(const QDLDL_int    n,
-                   const QDLDL_int*   Lp,
-                   const QDLDL_int*   Li,
-                   const QDLDL_float* Lx,
-                   QDLDL_float* x);
+QDLDL_API void QDLDL_Ltsolve(const QDLDL_int    n,
+                             const QDLDL_int*   Lp,
+                             const QDLDL_int*   Li,
+                             const QDLDL_float* Lx,
+                             QDLDL_float* x);
 
 # ifdef __cplusplus
 }
