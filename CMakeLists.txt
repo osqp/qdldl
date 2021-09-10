@@ -142,6 +142,13 @@ install(FILES ${qdldl_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/qdldl")
 # Create qdldl shared library
 add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
 
+# Declare that we are building the shared library to get proper symbol exports.
+# Shared library consumers should also define QDLDL_SHARED_LIB to get the library
+# exports properly, so we do it for them in the CMake interface by defining it as
+# a PUBLIC compile definition.
+target_compile_definitions(qdldl PRIVATE BUILDING_QDLDL)
+target_compile_definitions(qdldl PUBLIC  QDLDL_SHARED_LIB)
+
 # Declare include directories for the cmake exported target
 target_include_directories(qdldl
 	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
