@@ -69,11 +69,13 @@ jobs:
       matrix:
         float: [ON, OFF]
         long: [ON, OFF]
+        static: [ON, OFF]
+        shared: [ON, OFF]
 
     # Only test the build configs on Linux
     runs-on: ubuntu-latest
 
-    name: Config - FLOAT=${{ matrix.float }}, LONG=${{ matrix.long }}
+    name: Config - FLOAT=${{ matrix.float }}, LONG=${{ matrix.long }}, SHARED=${{ matrix.shared }}, STATIC=${{ matrix.static }}
 
     steps:
       - name: Check out repository
@@ -87,14 +89,16 @@ jobs:
       - name: Configure
         shell: bash
         working-directory: ${{ runner.workspace }}/build
-        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DDFLOAT=${{ matrix.float }} -DDLONG=${{ matrix.long }} -DUNITTESTS=ON -DCOVERAGE=OFF $GITHUB_WORKSPACE
+        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DQDLDL_BUILD_SHARED_LIB=${{ matrix.shared }} -DQDLDL_BUILD_STATIC_LIB=${{ matrix.static }} -DDFLOAT=${{ matrix.float }} -DDLONG=${{ matrix.long }} -DUNITTESTS=ON -DCOVERAGE=OFF $GITHUB_WORKSPACE
 
       - name: Build
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: cmake --build . --config $BUILD_TYPE
 
+        # The test suite requires the static library for linkage
       - name: Run tests
+        if: ${{ matrix.static == 'ON' }}
         shell: bash
         working-directory: ${{ runner.workspace }}/build
         run: ctest -C $BUILD_TYPE
