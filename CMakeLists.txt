@@ -60,6 +60,7 @@ endif (NOT MSVC)
 # numeric types
 if(DFLOAT)
   set(QDLDL_FLOAT_TYPE "float")
+  set(QDLDL_DFLOAT 1)
 else()
 	set(QDLDL_FLOAT_TYPE "double")
 endif()
@@ -67,6 +68,7 @@ endif()
 if(DLONG)
   set(QDLDL_INT_TYPE "long long")
 	set(QDLDL_INT_TYPE_MAX "LLONG_MAX")
+  set(QDLDL_DLONG 1)
 else()
 	set(QDLDL_INT_TYPE "int")
 	set(QDLDL_INT_TYPE_MAX "INT_MAX")
@@ -80,10 +82,6 @@ set(QDLDL_BOOL_TYPE "unsigned char")
 
 # Generate header file with the global options
 # ---------------------------------------------
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_configure.h.in
-               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_configure.h
-               NEWLINE_STYLE LF)
-
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_types.h.in
                ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_types.h
                NEWLINE_STYLE LF)
