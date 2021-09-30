@@ -16,6 +16,16 @@ typedef @QDLDL_BOOL_TYPE@   QDLDL_bool;  /* for boolean values  */
 //Maximum value of the signed type QDLDL_int.
 #define QDLDL_INT_MAX @QDLDL_INT_TYPE_MAX@
 
+/*
+ * Configuration options
+ */
+
+/* When defined, QDLDL is using floats instead of doubles */
+#cmakedefine QDLDL_DFLOAT
+
+/* When defined, QDLDL is using long long instead of int types */
+#cmakedefine QDLDL_DLONG
+
 # ifdef __cplusplus
 }
 # endif /* ifdef __cplusplus */

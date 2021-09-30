@@ -76,6 +76,7 @@ endif (NOT MSVC)
 # numeric types
 if(DFLOAT)
   set(QDLDL_FLOAT_TYPE "float")
+  set(QDLDL_DFLOAT 1)
 else()
 	set(QDLDL_FLOAT_TYPE "double")
 endif()
@@ -83,6 +84,7 @@ endif()
 if(DLONG)
   set(QDLDL_INT_TYPE "long long")
 	set(QDLDL_INT_TYPE_MAX "LLONG_MAX")
+  set(QDLDL_DLONG 1)
 else()
 	set(QDLDL_INT_TYPE "int")
 	set(QDLDL_INT_TYPE_MAX "INT_MAX")
@@ -94,6 +96,8 @@ endif()
 #problems when calling QDLDL from C++
 set(QDLDL_BOOL_TYPE "unsigned char")
 
+# Generate header file with the global options
+# ---------------------------------------------
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_types.h.in
                ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_types.h
                NEWLINE_STYLE LF)
@@ -164,18 +168,26 @@ message( STATUS "Shared library build is ${QDLDL_BUILD_SHARED_LIB}" )
 if( QDLDL_BUILD_SHARED_LIB )
     add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
 
+    # Declare that we are building the shared library to get proper symbol exports.
+    # Shared library consumers should also define QDLDL_SHARED_LIB to get the library
+    # exports properly, so we do it for them in the CMake interface by defining it as
+    # a PUBLIC compile definition.
+    target_compile_definitions(qdldl PRIVATE BUILDING_QDLDL)
+    target_compile_definitions(qdldl PUBLIC  QDLDL_SHARED_LIB)
+
     # Declare include directories for the cmake exported target
     target_include_directories(qdldl
-    	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    	"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
+        PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
     # Install qdldl shared library
     install(TARGETS qdldl
-    	EXPORT  ${PROJECT_NAME}
-    	LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    	ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    	RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+        EXPORT  ${PROJECT_NAME}
+        LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()
+
 
 message( STATUS "Demo executable build is ${QDLDL_BUILD_DEMO_EXE}" )
 
