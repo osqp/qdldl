@@ -21,10 +21,10 @@ typedef @QDLDL_BOOL_TYPE@   QDLDL_bool;  /* for boolean values  */
  */
 
 /* When defined, QDLDL is using floats instead of doubles */
-#cmakedefine QDLDL_DFLOAT
+#cmakedefine QDLDL_FLOAT
 
 /* When defined, QDLDL is using long long instead of int types */
-#cmakedefine QDLDL_DLONG
+#cmakedefine QDLDL_LONG
 
 # ifdef __cplusplus
 }
