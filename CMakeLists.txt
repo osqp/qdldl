@@ -9,6 +9,20 @@ set(QDLDL_VERSION "${QDLDL_VERSION_MAJOR}.${QDLDL_VERSION_MINOR}.${QDLDL_VERSION
 # Project name
 project(qdldl VERSION ${QDLDL_VERSION})
 
+include( CMakeDependentOption )
+
+option( QDLDL_BUILD_STATIC_LIB "Build the static library" ON )
+option( QDLDL_BUILD_SHARED_LIB "Build the shared library" ON )
+
+cmake_dependent_option( QDLDL_BUILD_DEMO_EXE
+                        "Build the demo executable (requires the static library)"
+                        ON    # Default to on
+                        QDLDL_BUILD_STATIC_LIB OFF ) # Force off if the static library isn't built
+
+cmake_dependent_option( QDLDL_UNITTESTS
+                        "Build the unit testing suite"
+                        OFF    # Default to off
+                        QDLDL_BUILD_STATIC_LIB OFF ) # Force off if the static library isn't built
 
 # Set the output folder where your program will be created
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
@@ -23,12 +37,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Options
 # ----------------------------------------------
 # Use floats instead of doubles
-set(DFLOAT OFF CACHE BOOL "Use float numbers instead of doubles")
+option( DFLOAT "Use float numbers instead of doubles" OFF )
 message(STATUS "Floats are ${DFLOAT}")
 
 # Use long integers for indexing
-set(DLONG ON CACHE BOOL "Use long integers (64bit) for indexing")
-if (NOT (CMAKE_SIZEOF_VOID_P EQUAL 8))
+option( DLONG "Use long integers (64bit) for indexing" ON )
+
+if( NOT (CMAKE_SIZEOF_VOID_P EQUAL 8) )
 	message(STATUS "Disabling long integers (64bit) on 32bit machine")
 	set(DLONG OFF)
 endif()
@@ -45,9 +60,10 @@ if (NOT MSVC)
 
     if (COVERAGE)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-	if(FORTRAN)
-		set(CMAKE_FORTRAN_FLAGS "${CMAKE_FORTRAN_FLAGS} --coverage")
-	endif(FORTRAN)
+
+	      if(FORTRAN)
+		        set(CMAKE_FORTRAN_FLAGS "${CMAKE_FORTRAN_FLAGS} --coverage")
+	      endif(FORTRAN)
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
@@ -60,7 +76,7 @@ endif (NOT MSVC)
 # numeric types
 if(DFLOAT)
   set(QDLDL_FLOAT_TYPE "float")
-  set(QDLDL_DFLOAT 1)
+  set(QDLDL_FLOAT 1)
 else()
 	set(QDLDL_FLOAT_TYPE "double")
 endif()
@@ -68,7 +84,7 @@ endif()
 if(DLONG)
   set(QDLDL_INT_TYPE "long long")
 	set(QDLDL_INT_TYPE_MAX "LLONG_MAX")
-  set(QDLDL_DLONG 1)
+  set(QDLDL_LONG 1)
 else()
 	set(QDLDL_INT_TYPE "int")
 	set(QDLDL_INT_TYPE_MAX "INT_MAX")
@@ -116,25 +132,28 @@ target_include_directories(qdldlobject PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 include(GNUInstallDirs)
 
-# Static library
-add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
-# Give same name to static library output
-set_target_properties(qdldlstatic PROPERTIES OUTPUT_NAME qdldl)
+message( STATUS "Static library build is ${QDLDL_BUILD_STATIC_LIB}" )
 
-# Declare include directories for the cmake exported target
-target_include_directories(qdldlstatic
-                           PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                                  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
+if( QDLDL_BUILD_STATIC_LIB )
+    # Static library
+    add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
+    # Give same name to static library output
+    set_target_properties(qdldlstatic PROPERTIES OUTPUT_NAME qdldl)
 
-# Install Static Library
-# ----------------------------------------------
+    # Declare include directories for the cmake exported target
+    target_include_directories(qdldlstatic
+                               PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+                                      "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
-install(TARGETS qdldlstatic
-        EXPORT  ${PROJECT_NAME}
-        ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    # Install Static Library
+    # ----------------------------------------------
 
+    install(TARGETS qdldlstatic
+            EXPORT  ${PROJECT_NAME}
+            ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()
 
 # Install Headers
 # ----------------------------------------------
@@ -144,85 +163,95 @@ install(FILES ${qdldl_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/qdldl")
 # Install Shared Library
 # ----------------------------------------------
 # Create qdldl shared library
-add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
+message( STATUS "Shared library build is ${QDLDL_BUILD_SHARED_LIB}" )
 
-# Declare that we are building the shared library to get proper symbol exports.
-# Shared library consumers should also define QDLDL_SHARED_LIB to get the library
-# exports properly, so we do it for them in the CMake interface by defining it as
-# a PUBLIC compile definition.
-target_compile_definitions(qdldl PRIVATE BUILDING_QDLDL)
-target_compile_definitions(qdldl PUBLIC  QDLDL_SHARED_LIB)
+if( QDLDL_BUILD_SHARED_LIB )
+    add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
 
-# Declare include directories for the cmake exported target
-target_include_directories(qdldl
-	PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-	"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
+    # Declare that we are building the shared library to get proper symbol exports.
+    # Shared library consumers should also define QDLDL_SHARED_LIB to get the library
+    # exports properly, so we do it for them in the CMake interface by defining it as
+    # a PUBLIC compile definition.
+    target_compile_definitions(qdldl PRIVATE BUILDING_QDLDL)
+    target_compile_definitions(qdldl PUBLIC  QDLDL_SHARED_LIB)
 
-# Install qdldl shared library
-install(TARGETS qdldl
-	EXPORT  ${PROJECT_NAME}
-	LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-	ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-	RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+    # Declare include directories for the cmake exported target
+    target_include_directories(qdldl
+        PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
-# Create demo executable (linked to static library)
-add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
-target_link_libraries (qdldl_example qdldlstatic)
+    # Install qdldl shared library
+    install(TARGETS qdldl
+        EXPORT  ${PROJECT_NAME}
+        LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()
 
+
+message( STATUS "Demo executable build is ${QDLDL_BUILD_DEMO_EXE}" )
+
+if( QDLDL_BUILD_DEMO_EXE )
+    # Create demo executable (linked to static library)
+    add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
+    target_link_libraries (qdldl_example qdldlstatic)
+else()
+    message( STATUS "Not building demo executable" )
+endif()
 
 # Create CMake packages for the build directory
 # ----------------------------------------------
-include(CMakePackageConfigHelpers)
+if( QDLDL_BUILD_SHARED_LIB OR QDLDL_BUILD_STATIC_LIB)
+    include(CMakePackageConfigHelpers)
 
-write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake"
-  VERSION ${QDLDL_VERSION}
-  COMPATIBILITY SameMajorVersion
-)
+    write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake"
+      VERSION ${QDLDL_VERSION}
+      COMPATIBILITY SameMajorVersion
+    )
 
-export(EXPORT ${PROJECT_NAME}
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/qdldl-targets.cmake"
-  NAMESPACE qdldl::)
+    export(EXPORT ${PROJECT_NAME}
+      FILE "${CMAKE_CURRENT_BINARY_DIR}/qdldl-targets.cmake"
+      NAMESPACE qdldl::)
 
-if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake)
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake "include(\"\${CMAKE_CURRENT_LIST_DIR}/qdldl-targets.cmake\")\n")
+    if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake)
+      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake "include(\"\${CMAKE_CURRENT_LIST_DIR}/qdldl-targets.cmake\")\n")
+    endif()
+
+
+    # Create CMake packages for the install directory
+    # ----------------------------------------------
+
+    set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/qdldl)
+
+    install(EXPORT ${PROJECT_NAME}
+            FILE qdldl-targets.cmake
+            NAMESPACE qdldl::
+            DESTINATION ${ConfigPackageLocation})
+
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake
+                  ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake
+            DESTINATION ${ConfigPackageLocation})
+
+    # Add uninstall command
+    # ----------------------------------------------
+    if(NOT TARGET uninstall)
+        configure_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/configure/cmake/cmake_uninstall.cmake.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+            IMMEDIATE @ONLY)
+
+        add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    endif()
 endif()
-
-
-# Create CMake packages for the install directory
-# ----------------------------------------------
-
-set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/qdldl)
-
-install(EXPORT ${PROJECT_NAME}
-        FILE qdldl-targets.cmake
-        NAMESPACE qdldl::
-        DESTINATION ${ConfigPackageLocation})
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/qdldl-config-version.cmake
-        DESTINATION ${ConfigPackageLocation})
-
-
-
-# Add uninstall command
-# ----------------------------------------------
-if(NOT TARGET uninstall)
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/configure/cmake/cmake_uninstall.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-        IMMEDIATE @ONLY)
-
-    add_custom_target(uninstall
-        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-endif()
-
 
 
 # Add testing
 # ----------------------------------------------
 # Add custom command to generate tests
-if (UNITTESTS)
+message( STATUS "Unit testing suite build is ${QDLDL_UNITTESTS}" )
 
+if( QDLDL_UNITTESTS )
     # Add test_headers and codegen_test_headers
     add_subdirectory(tests)
 
