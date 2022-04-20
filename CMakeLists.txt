@@ -37,17 +37,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Options
 # ----------------------------------------------
 # Use floats instead of doubles
-option( DFLOAT "Use float numbers instead of doubles" OFF )
-message(STATUS "Floats are ${DFLOAT}")
+option( QDLDL_FLOAT "Use float numbers instead of doubles" OFF )
+if( ${QDLDL_FLOAT} )
+    message( STATUS "Using single precision floats" )
+else()
+    message( STATUS "Using double precision floats" )
+endif()
 
 # Use long integers for indexing
-option( DLONG "Use long integers (64bit) for indexing" ON )
+option( QDLDL_LONG "Use long integers (64bit) for indexing" ON )
 
 if( NOT (CMAKE_SIZEOF_VOID_P EQUAL 8) )
 	message(STATUS "Disabling long integers (64bit) on 32bit machine")
 	set(DLONG OFF)
 endif()
-message(STATUS "Long integers (64bit) are ${DLONG}")
+message(STATUS "Long integers (64bit) are ${QDLDL_LONG}")
 
 
 # Set Compiler flags
@@ -74,14 +78,14 @@ endif (NOT MSVC)
 # ---------------------------------------------
 
 # numeric types
-if(DFLOAT)
+if(QDLDL_FLOAT)
   set(QDLDL_FLOAT_TYPE "float")
   set(QDLDL_FLOAT 1)
 else()
 	set(QDLDL_FLOAT_TYPE "double")
 endif()
 
-if(DLONG)
+if(QDLDL_LONG)
   set(QDLDL_INT_TYPE "long long")
 	set(QDLDL_INT_TYPE_MAX "LLONG_MAX")
   set(QDLDL_LONG 1)
