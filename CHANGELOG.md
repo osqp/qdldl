@@ -1,3 +1,8 @@
+Version 0.1.5 (7 August 2020)
+---------------------------------
+*   Reduce the amount of memory access in each iteration of the solver loops.
+
+
 Version 0.1.4 (6 September 2019)
 ---------------------------------
 *   Fix to cmake when building `qdldl::qdldlstatic`.
