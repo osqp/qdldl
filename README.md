@@ -31,7 +31,13 @@ This will generate an `out/` folder with contents:
 - `qdldl_example`: a **code example** from [`examples/example.c`](./examples/example.c)
 - `libqdldl`: a static and a dynamic versions of the library.
 
-You can include an addition option `-DUNITTESTS=ON` when calling `cmake`, which will result in an additional executable `qdldl_tester` being built in the `out/` folder to test QDLDL on a variety of problems, including those with rank deficient or otherwise ill-formatted inputs.
+You can control which libraries and executables are built using the following cmake options:
+
+* `QDLDL_BUILD_STATIC_LIB` (default on) - Build the static library version of QDLDL.
+* `QDLDL_BUILD_SHARED_LIB` (default on) - Build the shared library version of QDLDL.
+* `QDLDL_BUILD_DEMO_EXE` (default on) - Build the `qdldl_example` demo executable (requires the static library).
+
+You can include an addition option `-QDLDL_UNITTESTS=ON` when calling `cmake`, which will result in an additional executable `qdldl_tester` being built in the `out/` folder to test QDLDL on a variety of problems, including those with rank deficient or otherwise ill-formatted inputs.
 
 **N.B.** All files will have file extensions appropriate to your operating system.
 
@@ -67,8 +73,8 @@ The matrix input `A` should be quasidefinite.   The API provides some (non-compr
 ### Custom types for integer, floats and booleans
 QDLDL uses its own internal types for integers, floats and booleans (`QDLDL_int, QDLDL_float, QDLDL_bool`. They can be specified using the cmake options:
 
-- `DFLOAT` (default false): uses float numbers instead of doubles
-- `DLONG` (default true): uses long integers for indexing (for large matrices)
+- `QDLDL_FLOAT` (default false): uses float numbers instead of doubles
+- `QDLDL_LONG` (default true): uses long integers for indexing (for large matrices)
 
 The `QDLDL_bool` is internally defined as `unsigned char`.
 
