@@ -49,7 +49,7 @@ option( QDLDL_LONG "Use long integers (64bit) for indexing" ON )
 
 if( NOT (CMAKE_SIZEOF_VOID_P EQUAL 8) )
 	message(STATUS "Disabling long integers (64bit) on 32bit machine")
-	set(DLONG OFF)
+	set(QDLDL_LONG OFF)
 endif()
 message(STATUS "Long integers (64bit) are ${QDLDL_LONG}")
 

@@ -89,7 +89,7 @@ jobs:
       - name: Configure
         shell: bash
         working-directory: ${{ runner.workspace }}/build
-        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DQDLDL_BUILD_SHARED_LIB=${{ matrix.shared }} -DQDLDL_BUILD_STATIC_LIB=${{ matrix.static }} -DDFLOAT=${{ matrix.float }} -DDLONG=${{ matrix.long }} -DQDLDL_UNITTESTS=ON -DCOVERAGE=OFF $GITHUB_WORKSPACE
+        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DQDLDL_BUILD_SHARED_LIB=${{ matrix.shared }} -DQDLDL_BUILD_STATIC_LIB=${{ matrix.static }} -DQDLDL_FLOAT=${{ matrix.float }} -DQDLDL_LONG=${{ matrix.long }} -DQDLDL_UNITTESTS=ON -DCOVERAGE=OFF $GITHUB_WORKSPACE
 
       - name: Build
         shell: bash
