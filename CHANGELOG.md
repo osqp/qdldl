@@ -1,3 +1,8 @@
+Version 0.1.7 (4 April 2023)
+---------------------------------
+*   Using the correct CMake variable for longs during compilation
+*   Using the correct CMake variable for longs during CI Testing 
+
 Version 0.1.6 (20 June 2022)
 ---------------------------------
 *   Export the version number in CMake and in preprocessor macros.
