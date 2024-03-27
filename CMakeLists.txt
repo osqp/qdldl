@@ -1,5 +1,5 @@
 # Minimum version required
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.2...3.5)
 
 set(QDLDL_VERSION_MAJOR "0")
 set(QDLDL_VERSION_MINOR "1")
