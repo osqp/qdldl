@@ -103,11 +103,11 @@ set(QDLDL_BOOL_TYPE "unsigned char")
 # Generate header file with the global options
 # ---------------------------------------------
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_types.h.in
-               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_types.h
+               ${CMAKE_CURRENT_BINARY_DIR}/include/qdldl_types.h
                NEWLINE_STYLE LF)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configure/qdldl_version.h.in
-               ${CMAKE_CURRENT_SOURCE_DIR}/include/qdldl_version.h
+               ${CMAKE_CURRENT_BINARY_DIR}/include/qdldl_version.h
                NEWLINE_STYLE LF)
 
 
@@ -121,14 +121,16 @@ set(
 set(
 	qdldl_headers
 	include/qdldl.h
-	include/qdldl_types.h
-	include/qdldl_version.h
+	${CMAKE_CURRENT_BINARY_DIR}/include/qdldl_types.h
+	${CMAKE_CURRENT_BINARY_DIR}/include/qdldl_version.h
 	)
 
 # Create object library
 # ----------------------------------------------
 add_library (qdldlobject OBJECT ${qdldl_src} ${qdldl_headers})
-target_include_directories(qdldlobject PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(qdldlobject PRIVATE
+                           ${CMAKE_CURRENT_SOURCE_DIR}/include
+                           ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 
 # Create Static Library
@@ -147,6 +149,7 @@ if( QDLDL_BUILD_STATIC_LIB )
     # Declare include directories for the cmake exported target
     target_include_directories(qdldlstatic
                                PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+                                      "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
                                       "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
     # Install Static Library
@@ -182,7 +185,8 @@ if( QDLDL_BUILD_SHARED_LIB )
     # Declare include directories for the cmake exported target
     target_include_directories(qdldl
         PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
+               "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+               "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/qdldl>")
 
     # Install qdldl shared library
     install(TARGETS qdldl
