@@ -10,6 +10,7 @@ set(QDLDL_VERSION "${QDLDL_VERSION_MAJOR}.${QDLDL_VERSION_MINOR}.${QDLDL_VERSION
 project(qdldl VERSION ${QDLDL_VERSION})
 
 include( CMakeDependentOption )
+include(CheckCCompilerFlag)
 
 option( QDLDL_BUILD_STATIC_LIB "Build the static library" ON )
 option( QDLDL_BUILD_SHARED_LIB "Build the shared library" ON )
@@ -53,6 +54,11 @@ if( NOT (CMAKE_SIZEOF_VOID_P EQUAL 8) )
 endif()
 message(STATUS "Long integers (64bit) are ${QDLDL_LONG}")
 
+option( QDLDL_ENABLE_OPENMP_SIMD "Enable OpenMP SIMD annotations" OFF )
+if( ${QDLDL_ENABLE_OPENMP_SIMD} )
+  message( STATUS "Enabling OpenMP SIMD annotations" )
+endif()
+
 
 # Set Compiler flags
 # ----------------------------------------------
@@ -73,6 +79,30 @@ if (NOT MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g")
 endif (NOT MSVC)
+
+# Add flags for OpenMP SIMD optimizations
+if( ${QDLDL_ENABLE_OPENMP_SIMD} )
+  # Flags for Clang/GCC, if supported
+  check_c_compiler_flag( "-fopenmp-simd" HAVE_FOPENMP_SIMD )
+  if( ${HAVE_FOPENMP_SIMD} )
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp-simd")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fopenmp-simd")
+  endif()
+
+  # Flags for Intel linux compiler, if supported
+  check_c_compiler_flag( "-qopenmp-simd" HAVE_DASH_QOPENMP_SIMD )
+  if( ${HAVE_DASH_QOPENMP_SIMD} )
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qopenmp-simd")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -qopenmp-simd")
+  endif()
+
+  # Flags for Intel Windows compiler, if supported
+  check_c_compiler_flag( "/Qopenmp-simd" HAVE_SLASH_QOPENMP_SIMD )
+  if( ${HAVE_SLASH_QOPENMP_SIMD} )
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qopenmp-simd")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Qopenmp-simd")
+  endif()
+endif()
 
 # Generate header file with the global options
 # ---------------------------------------------
