@@ -1,0 +1,41 @@
+name: OpenMP SIMD
+
+on: [push, pull_request]
+
+env:
+  # The CMake build type
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        float: [ON, OFF]
+
+    name: OpenMP SIMD Build - ${{ matrix.float == 'ON' && 'single' || 'double' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Setup Environment
+        run: cmake -E make_directory ${{ runner.workspace }}/build
+
+      - name: Configure
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DQDLDL_UNITTESTS=ON -DQDLDL_FLOAT=${{ matrix.float }} -DCOVERAGE=OFF -DQDLDL_ENABLE_OPENMP_SIMD=ON $GITHUB_WORKSPACE
+
+      - name: Build
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake --build . --config $BUILD_TYPE
+
+      - name: Run tests
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: ctest -C $BUILD_TYPE
