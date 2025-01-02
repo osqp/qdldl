@@ -76,7 +76,7 @@ jobs:
         uses: imciner2/run-lcov@v1
         with:
           input_directory: ${{ github.workspace }}/build
-          exclude: '"$GITHUB_WORKSPACE/tests/*" "/usr/include/x86_64-linux-gnu/bits/*"'
+          exclude: '"$GITHUB_WORKSPACE/tests/*"'
           output_file: '${{ github.workspace }}/build/coverage.info'
 
       - name: Upload coverage
