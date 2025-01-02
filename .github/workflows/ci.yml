@@ -101,7 +101,9 @@ jobs:
       - name: "List dir"
         if: ${{ matrix.analysis == 'ON' }}
         shell: bash
-        run: ls -la ${{ github.workspace }}/
+        run: |
+          sudo apt-get install tree
+          tree ${{ github.workspace }}/build/
 
       - name: Upload diagnostics
         if: ${{ matrix.analysis == 'ON' }}
