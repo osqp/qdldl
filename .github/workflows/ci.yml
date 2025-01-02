@@ -96,7 +96,7 @@ jobs:
         uses: microsoft/sarif-actions@v0.1
         with:
           # Command to be sent to SARIF Multitool
-          command: 'merge ${{ github.workspace }}/build/*.sarif --recurse true --output-directory=${{ github.workspace }}/build/ --output-file=gcc.sarif'
+          command: merge ${{ github.workspace }}/build/*.sarif --recurse true --output-directory=${{ github.workspace }}/build/ --output-file=gcc.sarif
 
       - name: "List dir"
         if: ${{ matrix.analysis == 'ON' }}
