@@ -13,12 +13,24 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
-          - os: ubuntu-latest
+          # Use 24.04 explicitly to get newer GCC version
+          - os: ubuntu-24.04
+            compiler: gcc
+            gcc: 14
+            extra_c_flags: "-fdiagnostics-format=sarif-file"
             coverage: ON
+            analysis: ON
+            asan: ON
           - os: macos-latest
+            extra_c_flags: ""
             coverage: OFF
+            analysis: OFF
+            asan: OFF
           - os: windows-latest
+            extra_c_flags: ""
             coverage: OFF
+            analysis: OFF
+            asan: OFF
 
     runs-on: ${{ matrix.os }}
 
@@ -34,7 +46,15 @@ jobs:
       - name: Configure
         shell: bash
         working-directory: ${{ runner.workspace }}/build
-        run: cmake --warn-uninitialized -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DQDLDL_UNITTESTS=ON -DCOVERAGE=${{ matrix.coverage }} $GITHUB_WORKSPACE
+        run: |
+          cmake -S $GITHUB_WORKSPACE -B ${{ runner.workspace }}/build \
+          --warn-uninitialized \
+          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+          -DQDLDL_UNITTESTS=ON \
+          -DQDLDL_DEV_COVERAGE=${{ matrix.coverage }} \
+          -DQDLDL_DEV_ANALYSIS=${{ matrix.analysis }} \
+          -DQDLDL_DEV_ASAN=${{ matrix.asan }} \
+          -DCMAKE_C_FLAGS=${{ matrix.extra_c_flags }}
 
       - name: Build
         shell: bash
@@ -61,6 +81,21 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: '${{ runner.workspace }}/build/coverage.info'
+
+      - name: Merge diagnostics
+        if: ${{ matrix.analysis == 'ON' }}
+        uses: microsoft/sarif-actions@v0.1
+        with:
+          # Command to be sent to SARIF Multitool
+          command: 'merge ${{ runner.workspace }}/build/*.sarif --recurse true file.sarif --output-directory=${{ runner.workspace }}/build/ --output-file=gcc.sarif'
+
+      - name: Upload diagnostics
+        if: ${{ matrix.analysis == 'ON' }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: ${{ runner.workspace }}/build/gcc.sarif
+          category: gcc
 
 
   test_configs:
