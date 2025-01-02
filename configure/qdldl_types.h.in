@@ -1,11 +1,12 @@
 #ifndef QDLDL_TYPES_H
-# define QDLDL_TYPES_H
+#define QDLDL_TYPES_H
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 extern "C" {
-# endif /* ifdef __cplusplus */
+#endif /* ifdef __cplusplus */
 
-#include <limits.h> //for the QDLDL_INT_TYPE_MAX
+// For the QDLDL_INT_TYPE_MAX
+#include <limits.h>
 
 // QDLDL integer and float types
 
@@ -26,8 +27,8 @@ typedef @QDLDL_BOOL_TYPE@   QDLDL_bool;  /* for boolean values  */
 /* When defined, QDLDL is using long long instead of int types */
 #cmakedefine QDLDL_LONG
 
-# ifdef __cplusplus
+#ifdef __cplusplus
 }
-# endif /* ifdef __cplusplus */
+#endif /* ifdef __cplusplus */
 
 #endif /* ifndef QDLDL_TYPES_H */
