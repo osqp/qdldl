@@ -47,8 +47,8 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Setup Environment
-        run: cmake -E make_directory $QDLDL_BUILD_DIR_PREFIX
+#      - name: Setup Environment
+#        run: cmake -E make_directory $QDLDL_BUILD_DIR_PREFIX
 
       - name: Configure
         shell: bash
@@ -86,12 +86,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: '${{ github.workspace }}/build/coverage.info'
 
+      - name: "List dir"
+        if: ${{ matrix.analysis == 'ON' }}
+        shell: bash
+        run: ls -la ${{ github.workspace }}/build/
+
       - name: Merge diagnostics
         if: ${{ matrix.analysis == 'ON' }}
         uses: microsoft/sarif-actions@v0.1
         with:
           # Command to be sent to SARIF Multitool
-          command: 'merge ${{ github.workspace }}/build/*.sarif --recurse true file.sarif --output-directory=${{ github.workspace }}/build/ --output-file=gcc.sarif'
+          command: 'merge ${{ github.workspace }}/build/*.sarif --recurse true --output-directory=${{ github.workspace }}/build/ --output-file=gcc.sarif'
+
+      - name: "List dir"
+        if: ${{ matrix.analysis == 'ON' }}
+        shell: bash
+        run: ls -la ${{ github.workspace }}/build/
 
       - name: Upload diagnostics
         if: ${{ matrix.analysis == 'ON' }}
