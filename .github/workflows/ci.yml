@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   # The CMake build type
-  BUILD_TYPE: Release
+  BUILD_TYPE: Debug
 
 jobs:
   build:
