@@ -10,6 +10,7 @@ set(QDLDL_VERSION "${QDLDL_VERSION_MAJOR}.${QDLDL_VERSION_MINOR}.${QDLDL_VERSION
 project(qdldl VERSION ${QDLDL_VERSION})
 
 include( CMakeDependentOption )
+include( CheckCXXCompilerFlag )
 
 option( QDLDL_BUILD_STATIC_LIB "Build the static library" ON )
 option( QDLDL_BUILD_SHARED_LIB "Build the shared library" ON )
@@ -23,6 +24,14 @@ cmake_dependent_option( QDLDL_UNITTESTS
                         "Build the unit testing suite"
                         OFF    # Default to off
                         QDLDL_BUILD_STATIC_LIB OFF ) # Force off if the static library isn't built
+
+# Dev options
+option( QDLDL_DEV_COVERAGE "Include coverage information in the library" OFF )
+option( QDLDL_DEV_ANALYSIS "Run the compiler static analysis checks" OFF )
+option( QDLDL_DEV_ASAN "Build with ASAN" OFF )
+
+mark_as_advanced( OSQP_DEV_COVERAGE )
+mark_as_advanced( OSQP_DEV_ANALYSIS )
 
 # Set the output folder where your program will be created
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/out)
@@ -62,12 +71,33 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)  # -fPIC
 # Add compiler options if we are not on windows
 if (NOT MSVC)
 
-    if (COVERAGE)
+    if (QDLDL_DEV_COVERAGE)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
 
 	      if(FORTRAN)
 		        set(CMAKE_FORTRAN_FLAGS "${CMAKE_FORTRAN_FLAGS} --coverage")
 	      endif(FORTRAN)
+    endif()
+
+    if (QDLDL_DEV_ANALYSIS)
+        check_cxx_compiler_flag( "-fanalyzer" COMPILER_SUPPORTS_FANALYZER )
+
+        if( COMPILER_SUPPORTS_FANALYZER )
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fanalyzer")
+
+            message( STATUS "Enabling -fanalyzer static analysis" )
+        endif()
+    endif()
+
+    if(OSQP_ASAN)
+        set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-optimize-sibling-calls -fsanitize-address-use-after-scope -fno-omit-frame-pointer" )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -D_GLIBCXX_SANITIZE_VECTOR -fsanitize=address -fno-optimize-sibling-calls -fsanitize-address-use-after-scope -fno-omit-frame-pointer" )
+
+        # ASAN shouldn't be used with these options (https://github.com/google/sanitizers/wiki/AddressSanitizer#faq)
+        set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-protector -U_FORTIFY_SOURCE" )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-protector -U_FORTIFY_SOURCE" )
+
+        message( STATUS "Enabling ASAN" )
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
