@@ -265,6 +265,8 @@ void QDLDL_Lsolve(const QDLDL_int    n,
   QDLDL_int i,j;
   for(i = 0; i < n; i++){
     QDLDL_float val = x[i];
+
+    #pragma omp simd
     for(j = Lp[i]; j < Lp[i+1]; j++){
       x[Li[j]] -= Lx[j]*val;
     }
@@ -281,6 +283,8 @@ void QDLDL_Ltsolve(const QDLDL_int    n,
   QDLDL_int i,j;
   for(i = n-1; i>=0; i--){
     QDLDL_float val = x[i];
+
+    #pragma omp simd reduction(-:val)
     for(j = Lp[i]; j < Lp[i+1]; j++){
       val -= Lx[j]*x[Li[j]];
     }
@@ -299,6 +303,10 @@ void QDLDL_solve(const QDLDL_int       n,
   QDLDL_int i;
 
   QDLDL_Lsolve(n,Lp,Li,Lx,x);
-  for(i = 0; i < n; i++) x[i] *= Dinv[i];
+
+  #pragma omp simd
+  for(i = 0; i < n; i++)
+    x[i] *= Dinv[i];
+
   QDLDL_Ltsolve(n,Lp,Li,Lx,x);
 }
