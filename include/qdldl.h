@@ -19,6 +19,7 @@
  * limitations under the License.
  *
  * SPDX-License-Identifier: Apache-2.0
+ * SPDX-ExternalRef: PACKAGE_MANAGER purl pkg:github/osqp/qdldl
  */
 #ifndef QDLDL_H
 #define QDLDL_H
