@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos, windows]
+        variant: [ubuntu, macos, windows]
         include:
           - variant: ubuntu
             # Use 24.04 explicitly to get newer GCC version
