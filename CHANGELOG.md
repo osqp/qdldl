@@ -1,3 +1,10 @@
+Version 0.1.8 (17 Mar 2025)
+---------------------------------
+* Bump CMake minimum version to 3.5 for compatibility with CMake >= 3.27.
+* Include copyright headers in all c/h files.
+* Configure now places QDLDL headers into the build directory instead
+  of the source directory.
+
 Version 0.1.7 (4 April 2023)
 ---------------------------------
 *   Using the correct CMake variable for longs during compilation
