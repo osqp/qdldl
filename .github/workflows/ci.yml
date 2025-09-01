@@ -91,7 +91,7 @@ jobs:
           path-to-lcov: '${{ github.workspace }}/build/coverage.info'
 
       - name: Merge diagnostics
-        if: ${{ matrix.analysis == 'ON' }}
+        if: ${{ matrix.analysis == 'ON' && !contains(github.ref, 'dependabot') }}
         uses: microsoft/sarif-actions@v0.1
         with:
           # Command to be sent to SARIF Multitool. Runs by default in github.workspace, and including any absolute
@@ -99,7 +99,8 @@ jobs:
           command: merge ./build/*.c.c.sarif --recurse true --output-directory=./build/ --output-file=gcc.sarif
 
       - name: Upload diagnostics
-        if: ${{ matrix.analysis == 'ON' }}
+        # Dependabot can't upload results, so don't bother
+        if: ${{ matrix.analysis == 'ON' && !contains(github.ref, 'dependabot') }}
         uses: github/codeql-action/upload-sarif@v3
         with:
           # Path to SARIF file relative to the root of the repository
