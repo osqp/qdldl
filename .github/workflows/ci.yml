@@ -92,7 +92,7 @@ jobs:
 
       - name: Merge diagnostics
         if: ${{ matrix.analysis == 'ON' }}
-        uses: microsoft/sarif-actions@v0.1
+        uses: microsoft/sarif-actions@v0.2
         with:
           # Command to be sent to SARIF Multitool. Runs by default in github.workspace, and including any absolute
           # paths seems to not work, so everything must be relative.
