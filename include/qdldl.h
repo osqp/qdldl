@@ -95,12 +95,89 @@ QDLDL_API QDLDL_int QDLDL_etree(const QDLDL_int n, const QDLDL_int* Ap, const QD
 
 
 /**
+ * Compute the symbolic factorization (sparsity pattern) of the L factor
+ * for a quasidefinite matrix in compressed sparse column form, where
+ * the input matrix is assumed to contain data for the upper triangular
+ * part of A only, and there are no duplicate indices.
+ *
+ * Returns the column pointers Lp and row indices Li of L, which together
+ * define the sparsity pattern of L in CSC format.  This function uses
+ * only the sparsity structure of A (not the numeric values), so the
+ * result can be reused across multiple numeric factorizations with
+ * QDLDL_numeric when the sparsity pattern of A remains the same.
+ *
+ * Does not use MALLOC.  It is assumed that Lp is allocated with n+1
+ * elements, Li is allocated with sumLnz elements (as returned by
+ * QDLDL_etree), and iwork is allocated with 3*n elements.
+ *
+ * @param  n      number of columns in L and A (both square)
+ * @param  Ap     column pointers (size n+1) for columns of A (not modified)
+ * @param  Ai     row indices of A.  Has Ap[n] elements (not modified)
+ * @param  Lp     column pointers (size n+1) for columns of L
+ * @param  Li     row indices of L.  Has sumLnz elements
+ * @param  Lnz    count of nonzeros in each column of L below diagonal,
+ *                as given by QDLDL_etree (not modified)
+ * @param  etree  elimination tree as given by QDLDL_etree (not modified)
+ * @param  bwork  working array of bools. Length is n
+ * @param  iwork  working array of integers. Length is 3*n
+ *
+ */
+QDLDL_API void QDLDL_symbolic(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* Ai,
+                              QDLDL_int* Lp, QDLDL_int* Li, const QDLDL_int* Lnz,
+                              const QDLDL_int* etree, QDLDL_bool* bwork, QDLDL_int* iwork);
+
+
+/**
+ * Compute the numeric LDL decomposition for a quasidefinite matrix,
+ * given a pre-computed symbolic factorization (sparsity pattern of L).
+ *
+ * This function computes the numeric values Lx, D, and Dinv using
+ * the sparsity pattern (Lp, Li) previously computed by QDLDL_symbolic.
+ * It can be called repeatedly with different Ax values (but the same
+ * sparsity pattern) to efficiently refactorize.
+ *
+ * Does not use MALLOC.
+ *
+ * @param  n      number of columns in L and A (both square)
+ * @param  Ap     column pointers (size n+1) for columns of A (not modified)
+ * @param  Ai     row indices of A.  Has Ap[n] elements (not modified)
+ * @param  Ax     data of A.  Has Ap[n] elements (not modified)
+ * @param  Lp     column pointers (size n+1) for columns of L (not modified,
+ *                as computed by QDLDL_symbolic)
+ * @param  Li     row indices of L (not modified, as computed by QDLDL_symbolic)
+ * @param  Lx     data of L.  Has Lp[n] elements
+ * @param  D      vectorized factor D.  Length is n
+ * @param  Dinv   reciprocal of D.  Length is n
+ * @param  Lnz    count of nonzeros in each column of L below diagonal,
+ *                as given by QDLDL_etree (not modified)
+ * @param  etree  elimination tree as given by QDLDL_etree (not modified)
+ * @param  bwork  working array of bools. Length is n
+ * @param  iwork  working array of integers. Length is 3*n
+ * @param  fwork  working array of floats. Length is n
+ * @return        Returns a count of the number of positive elements
+ *                in D.  Returns -1 and exits immediately if any element
+ *                of D evaluates exactly to zero (matrix is not quasidefinite
+ *                or otherwise LDL factorisable)
+ *
+ */
+QDLDL_API QDLDL_int QDLDL_numeric(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* Ai,
+                                  const QDLDL_float* Ax, const QDLDL_int* Lp, const QDLDL_int* Li,
+                                  QDLDL_float* Lx, QDLDL_float* D, QDLDL_float* Dinv,
+                                  const QDLDL_int* Lnz, const QDLDL_int* etree, QDLDL_bool* bwork,
+                                  QDLDL_int* iwork, QDLDL_float* fwork);
+
+
+/**
  * Compute an LDL decomposition for a quasidefinite matrix
  * in compressed sparse column form, where the input matrix is
  * assumed to contain data for the upper triangular part of A only,
  * and there are no duplicate indices.
  *
  * Returns factors L, D and Dinv = 1./D.
+ *
+ * This is equivalent to calling QDLDL_symbolic followed by QDLDL_numeric.
+ * If you need to refactorize with different numeric values but the same
+ * sparsity pattern, use QDLDL_symbolic once and QDLDL_numeric repeatedly.
  *
  * Does not use MALLOC.  It is assumed that L will be a compressed
  * sparse column matrix with data (n,Lp,Li,Lx)  with sufficient space

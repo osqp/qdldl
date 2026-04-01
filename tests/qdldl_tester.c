@@ -45,6 +45,7 @@ int ldl_factor_solve(QDLDL_int An, QDLDL_int* Ap, QDLDL_int* Ai, QDLDL_float* Ax
 #include "test_two_by_two.h"
 #include "test_zero_on_diag.h"
 #include "test_osqp_kkt.h"
+#include "test_symbolic.h"
 
 
 int tests_run = 0;
@@ -60,6 +61,8 @@ static char* all_tests() {
     mu_run_test(test_two_by_two);
     mu_run_test(test_zero_on_diag);
     mu_run_test(test_osqp_kkt);
+    mu_run_test(test_symbolic);
+    mu_run_test(test_symbolic_refactor);
 
     return 0;
 }

@@ -91,11 +91,99 @@ QDLDL_int QDLDL_etree(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* A
 }
 
 
-QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* Ai,
-                       const QDLDL_float* Ax, QDLDL_int* Lp, QDLDL_int* Li, QDLDL_float* Lx,
-                       QDLDL_float* D, QDLDL_float* Dinv, const QDLDL_int* Lnz,
-                       const QDLDL_int* etree, QDLDL_bool* bwork, QDLDL_int* iwork,
-                       QDLDL_float* fwork) {
+void QDLDL_symbolic(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* Ai, QDLDL_int* Lp,
+                    QDLDL_int* Li, const QDLDL_int* Lnz, const QDLDL_int* etree,
+                    QDLDL_bool* bwork, QDLDL_int* iwork) {
+    QDLDL_int   i = 0;
+    QDLDL_int   k = 0;
+    QDLDL_int   bidx = 0;
+    QDLDL_int   nextIdx = 0;
+    QDLDL_int   nnzE = 0;
+    QDLDL_int   nnzY = 0;
+    QDLDL_int   tmpIdx = 0;
+    QDLDL_int*  yIdx;
+    QDLDL_int*  elimBuffer;
+    QDLDL_int*  LNextSpaceInCol;
+    QDLDL_bool* yMarkers;
+
+    // Partition working memory into pieces
+    yMarkers = bwork;
+    yIdx = iwork;
+    elimBuffer = iwork + n;
+    LNextSpaceInCol = iwork + n * 2;
+
+    Lp[0] = 0; // First column starts at index zero
+
+    for(i = 0; i < n; i++) {
+        // Compute L column pointers (cumulative sum of Lnz)
+        Lp[i + 1] = Lp[i] + Lnz[i];
+
+        // Initialize markers and next-space trackers
+        yMarkers[i] = QDLDL_UNUSED;
+        LNextSpaceInCol[i] = Lp[i];
+    }
+
+    // Start from 1: column 0 of L has no subdiagonal entries
+    for(k = 1; k < n; k++) {
+        nnzY = 0;
+
+        tmpIdx = Ap[k + 1];
+
+        for(i = Ap[k]; i < tmpIdx; i++) {
+            bidx = Ai[i];
+
+            // Skip the diagonal entry
+            if(bidx == k) {
+                continue;
+            }
+
+            // Walk the elimination tree to find the nonzero pattern
+            nextIdx = bidx;
+
+            if(yMarkers[nextIdx] == QDLDL_UNUSED) {
+
+                yMarkers[nextIdx] = QDLDL_USED;
+                elimBuffer[0] = nextIdx;
+                nnzE = 1;
+
+                nextIdx = etree[bidx];
+
+                while(nextIdx != QDLDL_UNKNOWN && nextIdx < k) {
+                    if(yMarkers[nextIdx] == QDLDL_USED)
+                        break;
+
+                    yMarkers[nextIdx] = QDLDL_USED;
+                    elimBuffer[nnzE] = nextIdx;
+                    nnzE++;
+                    nextIdx = etree[nextIdx];
+                }
+
+                while(nnzE) {
+                    yIdx[nnzY++] = elimBuffer[--nnzE];
+                }
+            }
+        }
+
+        // Place the row indices into Li
+        for(i = (nnzY - 1); i >= 0; i--) {
+            QDLDL_int cidx = yIdx[i];
+            tmpIdx = LNextSpaceInCol[cidx];
+
+            Li[tmpIdx] = k;
+            LNextSpaceInCol[cidx]++;
+
+            // Reset marker
+            yMarkers[cidx] = QDLDL_UNUSED;
+        }
+    }
+}
+
+
+QDLDL_int QDLDL_numeric(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* Ai,
+                        const QDLDL_float* Ax, const QDLDL_int* Lp, const QDLDL_int* Li,
+                        QDLDL_float* Lx, QDLDL_float* D, QDLDL_float* Dinv, const QDLDL_int* Lnz,
+                        const QDLDL_int* etree, QDLDL_bool* bwork, QDLDL_int* iwork,
+                        QDLDL_float* fwork) {
     QDLDL_int    i = 0;
     QDLDL_int    j = 0;
     QDLDL_int    k = 0;
@@ -120,16 +208,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
     LNextSpaceInCol = iwork + n * 2;
     yVals = fwork;
 
-
-    Lp[0] = 0; // First column starts at index zero
-
     for(i = 0; i < n; i++) {
-        // Compute L column indices
-        Lp[i + 1] = Lp[i] + Lnz[i]; // cumsum, total at the end
-
-        // Set all Yidx to be 'unused' initially
-        // in each column of L, the next available space
-        // to start is just the first space in the column
         yMarkers[i] = QDLDL_UNUSED;
         yVals[i] = 0.0;
         D[i] = 0.0;
@@ -228,7 +307,6 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
             // Now I have the cidx^th element of y = L\b.
             // so compute the corresponding element of
             // this row of L and put it into the right place
-            Li[tmpIdx] = k;
             Lx[tmpIdx] = yVals_cidx * Dinv[cidx];
 
             // D[k] -= yVals[cidx]*yVals[cidx]*Dinv[cidx];
@@ -259,6 +337,18 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
     }
 
     return positiveValuesInD;
+}
+
+
+QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* Ai,
+                       const QDLDL_float* Ax, QDLDL_int* Lp, QDLDL_int* Li, QDLDL_float* Lx,
+                       QDLDL_float* D, QDLDL_float* Dinv, const QDLDL_int* Lnz,
+                       const QDLDL_int* etree, QDLDL_bool* bwork, QDLDL_int* iwork,
+                       QDLDL_float* fwork) {
+
+    QDLDL_symbolic(n, Ap, Ai, Lp, Li, Lnz, etree, bwork, iwork);
+
+    return QDLDL_numeric(n, Ap, Ai, Ax, Lp, Li, Lx, D, Dinv, Lnz, etree, bwork, iwork, fwork);
 }
 
 // Solves (L+I)x = b
